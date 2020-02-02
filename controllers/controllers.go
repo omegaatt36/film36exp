@@ -5,98 +5,108 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 )
 
-type event struct {
-	ID          string `json:"ID"`
-	Title       string `json:"Title"`
-	Description string `json:"Description"`
+type film struct {
+	ID              string
+	Vendor          string `json:"Vendor"`
+	Production      string `json:"Production"`
+	ISO             string `json:"ISO"`
+	ForceProcessing string `json:"ForceProcessing"`
+	FilmSize        string `json:"FilmSize"`
+	FilmType        string `json:"FilmType"`
+	CreateAt        string
+	UptateAt        string
+	Description     string `json:"Description"`
 }
 
-type allEvents []event
+type allFIlms []film
 
-var events = allEvents{
-	{
-		ID:          "1",
-		Title:       "Introduction to Golang",
-		Description: "Come join us for a chance to learn how golang works and get to eventually try it out",
-	},
-}
+var films = allFIlms{}
 
-func HomeLink(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome home!")
-}
+// func HomeLink(w http.ResponseWriter, r *http.Request) {
+// 	fmt.Fprintf(w, "Welcome home!")
+// }
 
-func CreateEvent(w http.ResponseWriter, r *http.Request) {
-	var newEvent event
-	// Convert r.Body into a readable formart
+func CreateOneFilm(w http.ResponseWriter, r *http.Request) {
+	var newFilm film
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		fmt.Fprintf(w, "Kindly enter data with the event id, title and description only in order to update")
 	}
 
-	json.Unmarshal(reqBody, &newEvent)
+	json.Unmarshal(reqBody, &newFilm)
 
-	// Add the newly created event to the array of events
-	events = append(events, newEvent)
+	if len(films) == 0 {
+		newFilm.ID = "0"
+	} else {
+		inInt, err := strconv.Atoi(films[len(films)-1].ID)
+		if err != nil {
+			// handle error
+			// log??
+		}
+		newFilm.ID = strconv.Itoa(inInt + 1)
+	}
+	newFilm.UptateAt = time.Now().Format("2006-01-02 15:04:05")
+	newFilm.CreateAt = newFilm.UptateAt
 
-	// Return the 201 created status code
+	films = append(films, newFilm)
+
 	w.WriteHeader(http.StatusCreated)
-	// Return the newly created event
-	json.NewEncoder(w).Encode(newEvent)
+	json.NewEncoder(w).Encode(newFilm)
 }
 
-func GetOneEvent(w http.ResponseWriter, r *http.Request) {
-	// Get the ID from the url
-	eventID := mux.Vars(r)["id"]
+func GetOneFilm(w http.ResponseWriter, r *http.Request) {
+	filmID := mux.Vars(r)["id"]
 
-	// Get the details from an existing event
-	// Use the blank identifier to avoid creating a value that will not be used
-	for _, singleEvent := range events {
-		if singleEvent.ID == eventID {
-			json.NewEncoder(w).Encode(singleEvent)
+	for _, singleFIlm := range films {
+		if singleFIlm.ID == filmID {
+			json.NewEncoder(w).Encode(singleFIlm)
 		}
 	}
 }
 
-func GetAllEvents(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(events)
+func GetAllFilms(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(films)
 }
 
-func UpdateEvent(w http.ResponseWriter, r *http.Request) {
-	// Get the ID from the url
-	eventID := mux.Vars(r)["id"]
-	var updatedEvent event
-	// Convert r.Body into a readable formart
+func UpdateFilm(w http.ResponseWriter, r *http.Request) {
+	filmID := mux.Vars(r)["id"]
+	var updatedFilm film
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		fmt.Fprintf(w, "Kindly enter data with the event title and description only in order to update")
 	}
 
-	json.Unmarshal(reqBody, &updatedEvent)
+	json.Unmarshal(reqBody, &updatedFilm)
 
-	for i, singleEvent := range events {
-		if singleEvent.ID == eventID {
-			singleEvent.Title = updatedEvent.Title
-			singleEvent.Description = updatedEvent.Description
-			events[i] = singleEvent
-			json.NewEncoder(w).Encode(singleEvent)
+	for i, singleFIlm := range films {
+		if singleFIlm.ID == filmID {
+			singleFIlm.Production = updatedFilm.Production
+			singleFIlm.Vendor = updatedFilm.Vendor
+			singleFIlm.ISO = updatedFilm.ISO
+			singleFIlm.ForceProcessing = updatedFilm.ForceProcessing
+			singleFIlm.FilmSize = updatedFilm.FilmSize
+			singleFIlm.FilmType = updatedFilm.FilmType
+			singleFIlm.Description = updatedFilm.Description
+			singleFIlm.UptateAt = time.Now().Format("2006-01-02 15:04:05")
+			films[i] = singleFIlm
+			json.NewEncoder(w).Encode(singleFIlm)
 		}
 	}
 }
 
-func DeleteEvent(w http.ResponseWriter, r *http.Request) {
-	// Get the ID from the url
-	eventID := mux.Vars(r)["id"]
+func DeleteFilm(w http.ResponseWriter, r *http.Request) {
+	filmID := mux.Vars(r)["id"]
 
-	// Get the details from an existing event
-	// Use the blank identifier to avoid creating a value that will not be used
-	for i, singleEvent := range events {
-		if singleEvent.ID == eventID {
-			events = append(events[:i], events[i+1:]...)
-			fmt.Fprintf(w, "The event with ID %v has been deleted successfully", eventID)
+	for i, singleFIlm := range films {
+		if singleFIlm.ID == filmID {
+			films = append(films[:i], films[i+1:]...)
+			fmt.Fprintf(w, "The event with ID %v has been deleted successfully", filmID)
 		}
 	}
 }

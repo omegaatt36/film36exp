@@ -7,21 +7,21 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Route struct {
+type route struct {
 	Method     string
 	Pattern    string
 	Handler    http.HandlerFunc
 	Middleware mux.MiddlewareFunc
 }
 
-var routes []Route
+var routes []route
 
 func init() {
-	register("POST", "/event", controllers.CreateEvent, nil)
-	register("GET", "/events", controllers.GetAllEvents, nil)
-	register("GET", "/events/{id}", controllers.GetOneEvent, nil)
-	register("PATCH", "/events/{id}", controllers.UpdateEvent, nil)
-	register("DELETE", "/events/{id}", controllers.DeleteEvent, nil)
+	register("POST", "/Createfilm", controllers.CreateOneFilm, nil)
+	register("GET", "/films", controllers.GetAllFilms, nil)
+	register("GET", "/films/{id}", controllers.GetOneFilm, nil)
+	register("PATCH", "/films/{id}", controllers.UpdateFilm, nil)
+	register("DELETE", "/films/{id}", controllers.DeleteFilm, nil)
 }
 
 func NewRouter() *mux.Router {
@@ -37,5 +37,5 @@ func NewRouter() *mux.Router {
 }
 
 func register(method, pattern string, handler http.HandlerFunc, middleware mux.MiddlewareFunc) {
-	routes = append(routes, Route{method, pattern, handler, middleware})
+	routes = append(routes, route{method, pattern, handler, middleware})
 }

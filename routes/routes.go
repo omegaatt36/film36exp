@@ -19,9 +19,12 @@ var routes []route
 func init() {
 	register("POST", "/Createfilm", controllers.CreateOneFilm, nil)
 	register("GET", "/films", controllers.GetAllFilms, nil)
-	register("GET", "/films/{id}", controllers.GetOneFilm, nil)
-	register("PATCH", "/films/{id}", controllers.UpdateFilm, nil)
-	register("DELETE", "/films/{id}", controllers.DeleteFilm, nil)
+	register("GET", "/films/{filmID}", controllers.GetOneFilm, nil)
+	register("PATCH", "/films/{filmID}", controllers.UpdateFilm, nil)
+	register("DELETE", "/films/{filmID}", controllers.DeleteFilm, nil)
+
+	register("POST", "/CreatePic/{filmID}", controllers.CreatePic, nil)
+	register("PATCH", "/pics/{filmID}/{picID}", controllers.UpdatePic, nil)
 }
 
 // NewRouter create one 'mux.NewRouter()' and register handle funcs.

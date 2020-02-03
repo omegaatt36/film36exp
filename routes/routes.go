@@ -24,6 +24,7 @@ func init() {
 	register("DELETE", "/films/{id}", controllers.DeleteFilm, nil)
 }
 
+// NewRouter create one 'mux.NewRouter()' and register handle funcs.
 func NewRouter() *mux.Router {
 	r := mux.NewRouter()
 	for _, route := range routes {

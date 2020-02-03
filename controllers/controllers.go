@@ -28,10 +28,7 @@ type allFIlms []film
 
 var films = allFIlms{}
 
-// func HomeLink(w http.ResponseWriter, r *http.Request) {
-// 	fmt.Fprintf(w, "Welcome home!")
-// }
-
+// CreateOneFilm create one roll film.
 func CreateOneFilm(w http.ResponseWriter, r *http.Request) {
 	var newFilm film
 	reqBody, err := ioutil.ReadAll(r.Body)
@@ -60,6 +57,7 @@ func CreateOneFilm(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(newFilm)
 }
 
+// GetOneFilm get one roll film by "ID".
 func GetOneFilm(w http.ResponseWriter, r *http.Request) {
 	filmID := mux.Vars(r)["id"]
 
@@ -70,10 +68,12 @@ func GetOneFilm(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// GetAllFilms get all films.
 func GetAllFilms(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(films)
 }
 
+// UpdateFilm modify one roll film by "ID".
 func UpdateFilm(w http.ResponseWriter, r *http.Request) {
 	filmID := mux.Vars(r)["id"]
 	var updatedFilm film
@@ -100,6 +100,7 @@ func UpdateFilm(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// DeleteFilm remove one roll film by "ID".
 func DeleteFilm(w http.ResponseWriter, r *http.Request) {
 	filmID := mux.Vars(r)["id"]
 

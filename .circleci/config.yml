@@ -12,7 +12,7 @@ jobs:
     steps:
       - checkout
 
-      - run: go get -v -t -d ./...
+      - run: go get -v -d ./...
 
       - run:
           name: Unit test

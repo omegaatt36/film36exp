@@ -17,6 +17,7 @@ type route struct {
 var routes []route
 
 func init() {
+	register("GET", "/", controllers.GetDefault, nil)
 	register("POST", "/Createfilm", controllers.CreateOneFilm, nil)
 	register("GET", "/films", controllers.GetAllFilms, nil)
 	register("GET", "/films/{filmID}", controllers.GetOneFilm, nil)

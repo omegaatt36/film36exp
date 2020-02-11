@@ -3,7 +3,7 @@ module film36exp
 go 1.13
 
 require (
-	github.com/appleboy/gofight v2.0.0+incompatible // indirect
+	github.com/appleboy/gofight v2.0.0 // indirect
 	github.com/buger/jsonparser v0.0.0-20191204142016-1a29609e0929 // indirect
 	github.com/gorilla/mux v1.7.3 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect

@@ -1,6 +1,6 @@
 # film recoder
 
-
+[![Dependabot](https://api.dependabot.com/badges/status?host=github&repo=omegaatt36/film36exp&identifier=237454776)](https://app.dependabot.com/accounts/omegaatt36/repos/237454776)
 
 this is a practice for recoding film. It based on Golang as API server and will use Vue.js as frontend.
 

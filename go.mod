@@ -8,7 +8,7 @@ require (
 	github.com/gorilla/mux v1.7.4
 	github.com/meatballhat/negroni-logrus v1.1.0
 	github.com/sirupsen/logrus v1.4.2
-	github.com/stretchr/testify v1.4.0
+	github.com/stretchr/testify v1.5.1
 	github.com/urfave/negroni v1.0.0
 	golang.org/x/sys v0.0.0-20200116001909-b77594299b42 // indirect
 )

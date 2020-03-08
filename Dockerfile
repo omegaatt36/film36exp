@@ -1,4 +1,4 @@
-FROM golang:1.13.8-alpine3.11
+FROM golang:1.14.0-buster
 WORKDIR /film36exp
 ADD . /film36exp
 RUN cd /film36exp && go build

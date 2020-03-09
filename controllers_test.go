@@ -23,6 +23,18 @@ func TestGetDefault(t *testing.T) {
 		})
 }
 
+func BenchmarkGetDefault(b *testing.B) {
+	r := gofight.New()
+
+	for i := 0; i < b.N; i++ {
+		r.GET("/").
+			// trun on the debug mode.
+			SetDebug(true).
+			Run(routes.NewRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			})
+	}
+}
+
 func TestCreateOneFilm(t *testing.T) {
 	r := gofight.New()
 	testVendor := "Kodak"

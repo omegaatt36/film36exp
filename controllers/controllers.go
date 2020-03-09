@@ -6,11 +6,11 @@ import (
 	"net/http"
 )
 
-func responseWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-	response, _ := json.Marshal(payload)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	w.Write(response)
+func responseWithJSON(response http.ResponseWriter, code int, payload interface{}) {
+	result, _ := json.Marshal(payload)
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader(code)
+	response.Write(result)
 }
 
 // GetDefault get a index page for prac test.

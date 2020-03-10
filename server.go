@@ -1,30 +1,25 @@
 package main
 
 import (
-	"context"
 	"film36exp/db"
 	"film36exp/routes"
 	"fmt"
 	"net/http"
-	"time"
 
 	negronilogrus "github.com/meatballhat/negroni-logrus"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/negroni"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-const host = "127.0.0.1"
+// const host = "127.0.0.1"
 
 func main() {
 
-	// host := "127.0.0.1"
+	host := "127.0.0.1"
 	port := "8080"
 
 	// db
-	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancle()
-	db.Client, _ = mongo.Connect(ctx)
+	db.Init()
 
 	mux := routes.NewRouter()
 	/* Create the logger for the web application. */

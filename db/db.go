@@ -10,10 +10,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type MongoDB struct {
-	Collection *mongo.Collection
-}
-
 var client *mongo.Client
 
 const (
@@ -22,15 +18,14 @@ const (
 	CollectionPic  = "Pics"
 )
 
-func Init() {
+func SetClint(c *mongo.Client) {
+	// can be more explicitly
 	if client == nil {
-		ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancle()
-		client, _ = mongo.Connect(ctx) // <--- NOT THREAD SAFE
+		client = c // <--- NOT THREAD SAFE
 	}
 }
 
-func GetClient(collectionName string) *mongo.Collection {
+func GetCollection(collectionName string) *mongo.Collection {
 	return client.Database(Database).Collection(collectionName)
 }
 

@@ -44,7 +44,7 @@ func GetOneFilm(w http.ResponseWriter, r *http.Request) {
 // GetAllFilms get all films.
 func GetAllFilms(w http.ResponseWriter, r *http.Request) {
 	var films []model.Film
-	collection := db.GetClient(db.CollectionFilm)
+	collection := db.GetCollection(db.CollectionFilm)
 	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancle()
 	cursor, err := collection.Find(ctx, bson.M{})
@@ -105,7 +105,7 @@ func DeleteFilm(w http.ResponseWriter, r *http.Request) {
 
 func getFilmByID(filmID string) (film *model.Film, err error) {
 	id, _ := primitive.ObjectIDFromHex(filmID)
-	collection := db.GetClient(db.CollectionFilm)
+	collection := db.GetCollection(db.CollectionFilm)
 	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancle()
 	err = collection.FindOne(ctx, model.Film{ID: id}).Decode(&film)

@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
+	"film36exp/model"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -12,20 +13,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// pic is the smallest unit in this system.
-type pic struct {
-	ID       string `josn:"ID"`
-	Camera   string `josn:"Camera"`
-	Lens     string `josn:"Lens"`
-	Aperture string `josn:"Aperture"`
-	Shutter  string `josn:"Shutter"`
-	Notes    string `josn:"Notes"`
-}
-
-// CreatePic create one pic and append into film by ID.
+// CreatePic create one model.Pic and append into film by ID.
 // if films have not filmID, will not create one film.
 func CreatePic(w http.ResponseWriter, r *http.Request) {
-	var newPic pic
+	var newPic model.Pic
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		fmt.Fprintf(w, "Kindly enter data with the event id, title and description only in order to update")
@@ -61,7 +52,7 @@ func CreatePic(w http.ResponseWriter, r *http.Request) {
 func UpdatePic(w http.ResponseWriter, r *http.Request) {
 	filmID := mux.Vars(r)["filmID"]
 	picID := mux.Vars(r)["picID"]
-	var updatedPic pic
+	var updatedPic model.Pic
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		fmt.Fprintf(w, "Kindly enter data with the event title and description only in order to update")
@@ -89,11 +80,11 @@ func UpdatePic(w http.ResponseWriter, r *http.Request) {
 	responseWithJSON(w, http.StatusOK, p)
 }
 
-func getPicByID(ID string, pics []*pic) (p *pic, err error) {
+func getPicByID(ID string, pics []*model.Pic) (p *model.Pic, err error) {
 	for _, singlePic := range pics {
 		if singlePic.ID == ID {
 			return singlePic, nil
 		}
 	}
-	return p, errors.New("Pic ID not found")
+	return p, errors.New("model.Pic ID not found")
 }

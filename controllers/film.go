@@ -3,8 +3,9 @@ package controllers
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"film36exp/db"
+	"film36exp/model"
+	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -13,27 +14,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type Film struct {
-	ID              primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Vendor          string             `json:"Vendor,omitempty" bson:"Vendor,omitempty"`
-	Production      string             `json:"Production,omitempty" bson:"Production,omitempty"`
-	ISO             string             `json:"ISO,omitempty" bson:"ISO,omitempty"`
-	ForceProcessing string             `json:"ForceProcessing,omitempty" bson:"ForceProcessing,omitempty"`
-	FilmSize        string             `json:"FilmSize,omitempty" bson:"FilmSize,omitempty"`
-	FilmType        string             `json:"FilmType,omitempty" bson:"FilmType,omitempty"`
-	CreateAt        string             `json:"-" bson:"-"`
-	UptateAt        string             `json:"-" bson:"-"`
-	Description     string             `json:"Description,omitempty" bson:"Description,omitempty"`
-	Pics            []*pic             `json:"-" bson:"-"`
-}
-
-type allFIlms []*Film
-
-var films = allFIlms{}
+// type allFIlms []*model.Film
 
 // CreateOneFilm create one roll film.
 func CreateOneFilm(w http.ResponseWriter, r *http.Request) {
-	var newFilm Film
+	var newFilm model.Film
 	_ = json.NewDecoder(r.Body).Decode(&newFilm)
 	newFilm.ID = primitive.NewObjectID()
 	newFilm.UptateAt = time.Now().Format("2006-01-02 15:04:05")
@@ -41,23 +26,16 @@ func CreateOneFilm(w http.ResponseWriter, r *http.Request) {
 	collection := db.Films()
 	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancle()
-	result, _ := collection.InsertOne(ctx, newFilm)
-	// collection.InsertOne(ctx, newFilm)
-	responseWithJSON(w, http.StatusCreated, result)
+	// result, _ := collection.InsertOne(ctx, newFilm)
+	collection.InsertOne(ctx, newFilm)
+	responseWithJSON(w, http.StatusCreated, newFilm)
 }
 
 // GetOneFilm get one roll film by "ID".
 func GetOneFilm(w http.ResponseWriter, r *http.Request) {
-
-	filmID := mux.Vars(r)["filmID"]
-	id, _ := primitive.ObjectIDFromHex(filmID)
-	var film Film
-	collection := db.Films()
-	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancle()
-	err := collection.FindOne(ctx, Film{ID: id}).Decode(&film)
+	film, err := getFilmByID(mux.Vars(r)["filmID"])
 	if err != nil {
-		responseWithJSON(w, http.StatusInternalServerError, []byte(`{"message" : "`+err.Error()+`"}`))
+		responseWithError(w, http.StatusInternalServerError, err)
 		return
 	}
 	responseWithJSON(w, http.StatusOK, film)
@@ -65,74 +43,71 @@ func GetOneFilm(w http.ResponseWriter, r *http.Request) {
 
 // GetAllFilms get all films.
 func GetAllFilms(w http.ResponseWriter, r *http.Request) {
-	var films []Film
+	var films []model.Film
 	collection := db.Films()
 	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancle()
 	cursor, err := collection.Find(ctx, bson.M{})
 	if err != nil {
-		responseWithJSON(w, http.StatusInternalServerError, []byte(`{"message":"`+err.Error()+`"}`))
+		responseWithError(w, http.StatusInternalServerError, err)
 		return
 	}
 	defer cursor.Close(ctx)
 	for cursor.Next(ctx) {
-		var film Film
+		var film model.Film
 		cursor.Decode(&film)
 		films = append(films, film)
 	}
 	if err := cursor.Err(); err != err {
-		responseWithJSON(w, http.StatusInternalServerError, []byte(`{"message":"`+err.Error()+`"}`))
+		responseWithError(w, http.StatusInternalServerError, err)
 		return
 	}
 	responseWithJSON(w, http.StatusOK, films)
 }
 
-// // UpdateFilm modify one roll film by "ID".
-// func UpdateFilm(w http.ResponseWriter, r *http.Request) {
-// 	filmID := mux.Vars(r)["filmID"]
-// 	var updatedFilm film
-// 	reqBody, err := ioutil.ReadAll(r.Body)
-// 	if err != nil {
-// 		fmt.Fprintf(w, "Kindly enter data with the event title and description only in order to update")
-// 	}
-// 	f, err := getFilmByID(filmID)
+// UpdateFilm modify one roll film by "ID".
+func UpdateFilm(w http.ResponseWriter, r *http.Request) {
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		responseWithError(w, http.StatusInternalServerError, err)
+		return
+	}
+	var updatedFilm model.Film
+	json.Unmarshal(reqBody, &updatedFilm)
+	id, _ := primitive.ObjectIDFromHex(mux.Vars(r)["filmID"])
+	filter := bson.M{"_id": bson.M{"$eq": id}}
+	updatedFilm.UptateAt = time.Now().Format("2006-01-02 15:04:05")
+	update := bson.M{"$set": updatedFilm}
+	collection := db.Films()
+	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancle()
+	if _, err := collection.UpdateMany(ctx, filter, update); err != nil {
+		responseWithError(w, http.StatusInternalServerError, err)
+		return
+	}
+	updatedFilm.ID = id
+	responseWithJSON(w, http.StatusOK, updatedFilm)
+}
 
-// 	if err != nil {
-// 		responseWithJSON(w, http.StatusInternalServerError, err.Error())
-// 		return
-// 	}
-// }
+// DeleteFilm remove one roll film by "ID".
+func DeleteFilm(w http.ResponseWriter, r *http.Request) {
+	id, _ := primitive.ObjectIDFromHex(mux.Vars(r)["filmID"])
+	filter := bson.M{"_id": bson.M{"$eq": id}}
+	collection := db.Films()
+	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancle()
+	if _, err := collection.DeleteOne(ctx, filter); err != nil {
+		responseWithError(w, http.StatusInternalServerError, err)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
 
-// 	json.Unmarshal(reqBody, &updatedFilm)
-
-// 	f.Production = updatedFilm.Production
-// 	f.Vendor = updatedFilm.Vendor
-// 	f.ISO = updatedFilm.ISO
-// 	f.ForceProcessing = updatedFilm.ForceProcessing
-// 	f.FilmSize = updatedFilm.FilmSize
-// 	f.FilmType = updatedFilm.FilmType
-// 	f.Description = updatedFilm.Description
-// 	f.UptateAt = time.Now().Format("2006-01-02 15:04:05")
-// 	responseWithJSON(w, http.StatusOK, f)
-// }
-
-// // DeleteFilm remove one roll film by "ID".
-// func DeleteFilm(w http.ResponseWriter, r *http.Request) {
-// 	filmID := mux.Vars(r)["filmID"]
-
-// 	for i, singleFIlm := range films {
-// 		if singleFIlm.ID == filmID {
-// 			films = append(films[:i], films[i+1:]...)
-// 			fmt.Fprintf(w, "The event with ID %v has been deleted successfully", filmID)
-// 		}
-// 	}
-// }
-
-func getFilmByID(ID string) (f *Film, err error) {
-	// for _, singleFilm := range films {
-	// 	if singleFilm.ID == ID {
-	// 		return singleFilm, nil
-	// 	}
-	// }
-	return f, errors.New("Film ID not found")
+func getFilmByID(filmID string) (film *model.Film, err error) {
+	id, _ := primitive.ObjectIDFromHex(filmID)
+	collection := db.Films()
+	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancle()
+	err = collection.FindOne(ctx, model.Film{ID: id}).Decode(&film)
+	return film, err
 }

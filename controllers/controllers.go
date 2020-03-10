@@ -12,6 +12,11 @@ func responseWithJSON(response http.ResponseWriter, code int, payload interface{
 	response.WriteHeader(code)
 	response.Write(result)
 }
+func responseWithError(response http.ResponseWriter, code int, err error) {
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader(code)
+	response.Write([]byte(`{"message" : "` + err.Error() + `"}`))
+}
 
 // GetDefault get a index page for prac test.
 func GetDefault(w http.ResponseWriter, r *http.Request) {

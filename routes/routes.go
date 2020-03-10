@@ -21,8 +21,8 @@ func init() {
 	register("POST", "/Createfilm", controllers.CreateOneFilm, nil)
 	register("GET", "/films", controllers.GetAllFilms, nil)
 	register("GET", "/films/{filmID}", controllers.GetOneFilm, nil)
-	// register("PATCH", "/films/{filmID}", controllers.UpdateFilm, nil)
-	// register("DELETE", "/films/{filmID}", controllers.DeleteFilm, nil)
+	register("PATCH", "/films/{filmID}", controllers.UpdateFilm, nil)
+	register("DELETE", "/films/{filmID}", controllers.DeleteFilm, nil)
 
 	// register("POST", "/CreatePic/{filmID}", controllers.CreatePic, nil)
 	// register("PATCH", "/pics/{filmID}/{picID}", controllers.UpdatePic, nil)

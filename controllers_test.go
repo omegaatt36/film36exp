@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/appleboy/gofight/v2"
-	"github.com/buger/jsonparser"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,37 +34,37 @@ func BenchmarkGetDefault(b *testing.B) {
 	}
 }
 
-func TestCreateOneFilm(t *testing.T) {
-	r := gofight.New()
-	testVendor := "Kodak"
-	testProduction := "Protra"
-	testISO := "400"
-	testFilmSize := "135"
-	testFilmType := "negtive"
-	r.POST("/Createfilm").
-		// trun on the debug mode.
-		SetDebug(true).
-		SetJSON(gofight.D{
-			"Vendor":     testVendor,
-			"Production": testProduction,
-			"ISO":        testISO,
-			"FilmSize":   testFilmSize,
-			"FilmType":   testFilmType,
-		}).
-		Run(routes.NewRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+// func TestCreateOneFilm(t *testing.T) {
+// 	r := gofight.New()
+// 	testVendor := "Kodak"
+// 	testProduction := "Protra"
+// 	testISO := "400"
+// 	testFilmSize := "135"
+// 	testFilmType := "negtive"
+// 	r.POST("/Createfilm").
+// 		// trun on the debug mode.
+// 		SetDebug(true).
+// 		SetJSON(gofight.D{
+// 			"Vendor":     testVendor,
+// 			"Production": testProduction,
+// 			"ISO":        testISO,
+// 			"FilmSize":   testFilmSize,
+// 			"FilmType":   testFilmType,
+// 		}).
+// 		Run(routes.NewRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+// 			data := []byte(r.Body.String())
 
-			vender, _ := jsonparser.GetString(data, "Vendor")
-			production, _ := jsonparser.GetString(data, "Production")
-			iso, _ := jsonparser.GetString(data, "ISO")
-			filmSize, _ := jsonparser.GetString(data, "FilmSize")
-			filmType, _ := jsonparser.GetString(data, "FilmType")
+// 			vender, _ := jsonparser.GetString(data, "Vendor")
+// 			production, _ := jsonparser.GetString(data, "Production")
+// 			iso, _ := jsonparser.GetString(data, "ISO")
+// 			filmSize, _ := jsonparser.GetString(data, "FilmSize")
+// 			filmType, _ := jsonparser.GetString(data, "FilmType")
 
-			assert.Equal(t, testVendor, vender)
-			assert.Equal(t, testProduction, production)
-			assert.Equal(t, testISO, iso)
-			assert.Equal(t, testFilmSize, filmSize)
-			assert.Equal(t, testFilmType, filmType)
-			assert.Equal(t, http.StatusCreated, r.Code)
-		})
-}
+// 			assert.Equal(t, testVendor, vender)
+// 			assert.Equal(t, testProduction, production)
+// 			assert.Equal(t, testISO, iso)
+// 			assert.Equal(t, testFilmSize, filmSize)
+// 			assert.Equal(t, testFilmType, filmType)
+// 			assert.Equal(t, http.StatusCreated, r.Code)
+// 		})
+// }

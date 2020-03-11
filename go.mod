@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/appleboy/gofight/v2 v2.1.2
-	github.com/buger/jsonparser v0.0.0-20191204142016-1a29609e0929
+	github.com/gorilla/handlers v1.4.2
 	github.com/gorilla/mux v1.7.4
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/meatballhat/negroni-logrus v1.1.0

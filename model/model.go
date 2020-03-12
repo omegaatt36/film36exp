@@ -4,6 +4,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// Film recode one film infomation.
 type Film struct {
 	ID              primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	Vendor          string             `json:"Vendor,omitempty" bson:"Vendor,omitempty"`
@@ -18,12 +19,13 @@ type Film struct {
 	Pics            []*Pic             `json:"Pics,omitempty" bson:"Pics,omitempty"`
 }
 
-// Pic is the smallest unit in this system.
+// Pic is the smallest unit.
 type Pic struct {
-	ID       string `josn:"ID"`
-	Camera   string `josn:"Camera"`
-	Lens     string `josn:"Lens"`
-	Aperture string `josn:"Aperture"`
-	Shutter  string `josn:"Shutter"`
-	Notes    string `josn:"Notes"`
+	ID       primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	FID      primitive.ObjectID `json:"FID,omitempty" bson:"FID,omitempty"`
+	Camera   string             `json:"Camera,omitempty" bson:"Camera,omitempty"`
+	Lens     string             `json:"Lens,omitempty" bson:"Lens,omitempty"`
+	Aperture string             `json:"Aperture,omitempty" bson:"Aperture,omitempty"`
+	Shutter  string             `json:"Shutter,omitempty" bson:"Shutter,omitempty"`
+	Notes    string             `json:"Notes,omitempty" bson:"Notes,omitempty"`
 }

@@ -108,8 +108,7 @@ func DeleteFilm(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func isFilmExist(filmID string) bool {
-	id, _ := primitive.ObjectIDFromHex(filmID)
+func isFilmExist(id primitive.ObjectID) bool {
 	if singleResult := db.FindOne(db.CollectionFilm, model.Film{ID: id}); singleResult.Err() != nil {
 		return false
 	}

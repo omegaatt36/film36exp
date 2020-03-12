@@ -16,7 +16,6 @@ type Film struct {
 	CreateAt        string             `json:"CreateAt,omitempty" bson:"CreateAt,omitempty"`
 	UptateAt        string             `json:"UptateAt,omitempty" bson:"UptateAt,omitempty"`
 	Description     string             `json:"Description,omitempty" bson:"Description,omitempty"`
-	Pics            []*Pic             `json:"Pics,omitempty" bson:"Pics,omitempty"`
 }
 
 // Pic is the smallest unit.

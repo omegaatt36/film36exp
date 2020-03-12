@@ -1,12 +1,16 @@
 package controllers
 
 import (
+	"context"
 	"encoding/json"
 	"film36exp/db"
 	"film36exp/model"
+	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -29,43 +33,53 @@ func CreatePic(w http.ResponseWriter, r *http.Request) {
 	responseWithJSON(w, http.StatusCreated, newPic)
 }
 
-// UpdatePic modify one pick by "filmID" and "picID".
+// UpdatePic modify one pick by "picID".
 func UpdatePic(w http.ResponseWriter, r *http.Request) {
-	// filmID := mux.Vars(r)["filmID"]
-	// picID := mux.Vars(r)["picID"]
-	// var updatedPic model.Pic
-	// reqBody, err := ioutil.ReadAll(r.Body)
-	// if err != nil {
-	// 	fmt.Fprintf(w, "Kindly enter data with the event title and description only in order to update")
-	// }
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		responseWithError(w, http.StatusInternalServerError, err)
+		return
+	}
+	id, err := primitive.ObjectIDFromHex(mux.Vars(r)["picID"])
+	if err != nil {
+		responseWithJSON(w, http.StatusOK, map[string]string{"message": "id error"})
+		return
+	}
+	var updatedPic model.Pic
+	json.Unmarshal(reqBody, &updatedPic)
+	updatedPic.ID = id
 
-	// f, err := getFilmByID(filmID)
-	// if err != nil {
-	// 	responseWithJSON(w, http.StatusInternalServerError, err.Error())
-	// 	return
-	// }
-	// p, err := getPicByID(picID, f.Pics)
-	// if err != nil {
-	// 	responseWithJSON(w, http.StatusInternalServerError, err.Error())
-	// 	return
-	// }
-
-	// json.Unmarshal(reqBody, &updatedPic)
-
-	// p.Camera = updatedPic.Camera
-	// p.Lens = updatedPic.Lens
-	// p.Aperture = updatedPic.Aperture
-	// p.Shutter = updatedPic.Shutter
-	// p.Notes = updatedPic.Notes
-	// f.UptateAt = time.Now().Format("2006-01-02 15:04:05")
-	// responseWithJSON(w, http.StatusOK, p)
+	if _, err := db.Update(db.CollectionPic, id, updatedPic); err != nil {
+		responseWithError(w, http.StatusInternalServerError, err)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }
 
-// func getPicByID(ID string, pics []*model.Pic) (p *model.Pic, err error) {
-// 	for _, singlePic := range pics {
-// 		if singlePic.ID == ID {
-// 			return singlePic, nil
-// 		}
-// 	}
-// 	return p, errors.New("model.Pic ID not found")
-// }
+// GetPics get pics in the film by "filmID".
+func GetPics(w http.ResponseWriter, r *http.Request) {
+	var pics []model.Pic
+	collection := db.GetCollection(db.CollectionPic)
+	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancle()
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		responseWithError(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer cursor.Close(ctx)
+	filmID := mux.Vars(r)["filmID"]
+	fid, _ := primitive.ObjectIDFromHex(filmID)
+	for cursor.Next(ctx) {
+		var pic model.Pic
+		cursor.Decode(&pic)
+		if pic.FID == fid {
+			pics = append(pics, pic)
+		}
+	}
+	if err := cursor.Err(); err != err {
+		responseWithError(w, http.StatusInternalServerError, err)
+		return
+	}
+	responseWithJSON(w, http.StatusOK, pics)
+}

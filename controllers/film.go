@@ -70,7 +70,7 @@ func GetAllFilms(w http.ResponseWriter, r *http.Request) {
 	responseWithJSON(w, http.StatusOK, films)
 }
 
-// UpdateFilm modify one roll film by "ID".
+// UpdateFilm modify one roll film by "filmID".
 func UpdateFilm(w http.ResponseWriter, r *http.Request) {
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -91,10 +91,10 @@ func UpdateFilm(w http.ResponseWriter, r *http.Request) {
 		responseWithError(w, http.StatusInternalServerError, err)
 		return
 	}
-	responseWithJSON(w, http.StatusOK, updatedFilm)
+	w.WriteHeader(http.StatusNoContent)
 }
 
-// DeleteFilm remove one roll film by "ID".
+// DeleteFilm remove one roll film by "filmID".
 func DeleteFilm(w http.ResponseWriter, r *http.Request) {
 	id, err := primitive.ObjectIDFromHex(mux.Vars(r)["filmID"])
 	if err != nil {
@@ -114,13 +114,3 @@ func isFilmExist(id primitive.ObjectID) bool {
 	}
 	return true
 }
-
-// indirect
-// func getFilmByID(filmID string) (film *model.Film, err error) {
-// 	id, _ := primitive.ObjectIDFromHex(filmID)
-// 	collection := db.GetCollection(db.CollectionFilm)
-// 	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
-// 	defer cancle()
-// 	err = collection.FindOne(ctx, model.Film{ID: id}).Decode(&film)
-// 	return film, err
-// }

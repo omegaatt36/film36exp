@@ -24,8 +24,9 @@ func init() {
 	register("PATCH", "/films/{filmID}", controllers.UpdateFilm, nil)
 	register("DELETE", "/films/{filmID}", controllers.DeleteFilm, nil)
 
-	// register("POST", "/CreatePic/{filmID}", controllers.CreatePic, nil)
-	// register("PATCH", "/pics/{filmID}/{picID}", controllers.UpdatePic, nil)
+	register("POST", "/CreatePic/{filmID}", controllers.CreatePic, nil)
+	register("GET", "/pics/{filmID}", controllers.GetPics, nil)
+	register("PATCH", "/pics/{picID}", controllers.UpdatePic, nil)
 }
 
 // NewRouter create one 'mux.NewRouter()' and register handle funcs.

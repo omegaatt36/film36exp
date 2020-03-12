@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"film36exp/model"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -53,9 +52,9 @@ func Update(collectionName string, _id primitive.ObjectID, item interface{}) (*m
 	return collection.UpdateMany(ctx, filter, update)
 }
 
-func FindOne(collectionName string, _id primitive.ObjectID) (r *mongo.SingleResult) {
+func FindOne(collectionName string, filter interface{}) (r *mongo.SingleResult) {
 	collection := client.Database(Database).Collection(collectionName)
 	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancle()
-	return collection.FindOne(ctx, model.Film{ID: _id})
+	return collection.FindOne(ctx, filter)
 }

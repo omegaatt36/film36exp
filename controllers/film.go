@@ -30,12 +30,17 @@ func GetOneFilm(w http.ResponseWriter, r *http.Request) {
 	var film model.Film
 	id, err := primitive.ObjectIDFromHex(mux.Vars(r)["filmID"])
 	if err != nil {
-		responseWithJSON(w, http.StatusOK, map[string]string{"message": "id error"})
+		responseWithJSON(w, http.StatusInternalServerError, map[string]string{"message": "id error"})
 		return
 	}
-	if err := db.FindOne(db.CollectionFilm, id).Decode(&film); err != nil {
-		// responseWithError(w, http.StatusInternalServerError, err)
-		responseWithJSON(w, http.StatusOK, map[string]string{"message": err.Error()})
+	singleResult := db.FindOne(db.CollectionFilm, model.Film{ID: id})
+	if singleResult.Err() != nil {
+		responseWithJSON(w, http.StatusInternalServerError, map[string]string{"message": singleResult.Err().Error()})
+		return
+	}
+	err = singleResult.Decode(&film)
+	if err != nil {
+		responseWithJSON(w, http.StatusInternalServerError, map[string]string{"message": err.Error()})
 		return
 	}
 	responseWithJSON(w, http.StatusOK, film)
@@ -103,11 +108,20 @@ func DeleteFilm(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func getFilmByID(filmID string) (film *model.Film, err error) {
+func isFilmExist(filmID string) bool {
 	id, _ := primitive.ObjectIDFromHex(filmID)
-	collection := db.GetCollection(db.CollectionFilm)
-	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancle()
-	err = collection.FindOne(ctx, model.Film{ID: id}).Decode(&film)
-	return film, err
+	if singleResult := db.FindOne(db.CollectionFilm, model.Film{ID: id}); singleResult.Err() != nil {
+		return false
+	}
+	return true
 }
+
+// indirect
+// func getFilmByID(filmID string) (film *model.Film, err error) {
+// 	id, _ := primitive.ObjectIDFromHex(filmID)
+// 	collection := db.GetCollection(db.CollectionFilm)
+// 	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
+// 	defer cancle()
+// 	err = collection.FindOne(ctx, model.Film{ID: id}).Decode(&film)
+// 	return film, err
+// }

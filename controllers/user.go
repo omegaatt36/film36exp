@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"film36exp/auth"
 	"film36exp/db"
 	"film36exp/model"
+	"film36exp/utility"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -21,50 +23,52 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	var user model.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil || user.UserName == "" || user.Password == "" {
-		responseWithJSON(w, http.StatusBadRequest, Responce{Message: "bad param", Result: ResFailed})
+		utility.ResponseWithJSON(w, http.StatusBadRequest, utility.Response{Message: "bad param", Result: utility.ResFailed})
 		return
 	}
 	if isUserExist(user.UserName) {
-		responseWithJSON(w, http.StatusBadRequest, Responce{Message: "user exist", Result: ResFailed})
+		utility.ResponseWithJSON(w, http.StatusBadRequest, utility.Response{Message: "user exist", Result: utility.ResFailed})
 		return
 	}
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		responseWithJSON(w, http.StatusInternalServerError, Responce{Message: "password parse error", Result: ResFailed})
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "password parse error", Result: utility.ResFailed})
 		return
 	}
 	user.Password = string(hash)
 	_, err = db.Create(db.CollectionUser, user)
 	if err != nil {
-		responseWithJSON(w, http.StatusInternalServerError, Responce{Message: "DB insert error", Result: ResFailed})
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "DB insert error", Result: utility.ResFailed})
 		return
 	}
-	responseWithJSON(w, http.StatusOK, Responce{Result: ResSuccess})
+	utility.ResponseWithJSON(w, http.StatusOK, utility.Response{Result: utility.ResSuccess})
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	var user model.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil || user.UserName == "" || user.Password == "" {
-		responseWithJSON(w, http.StatusBadRequest, Responce{Message: "bad param", Result: ResFailed})
+		utility.ResponseWithJSON(w, http.StatusBadRequest, utility.Response{Message: "bad param", Result: utility.ResFailed})
 		return
 	}
 	singleResult := db.FindOne(db.CollectionUser, model.User{UserName: user.UserName})
 	if singleResult.Err() != nil {
-		responseWithJSON(w, http.StatusBadRequest, Responce{Message: "user not exist", Result: ResFailed})
+		utility.ResponseWithJSON(w, http.StatusBadRequest, utility.Response{Message: "user not exist", Result: utility.ResFailed})
 		return
 
 	}
 	var userInDB model.User
 	err = singleResult.Decode(&userInDB)
 	if err != nil {
-		responseWithJSON(w, http.StatusInternalServerError, Responce{Message: "DB decode error", Result: ResFailed})
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "DB decode error", Result: utility.ResFailed})
 		return
 	}
 	eq := bcrypt.CompareHashAndPassword([]byte(userInDB.Password), []byte(user.Password))
 	if eq != nil {
-		responseWithJSON(w, http.StatusInternalServerError, Responce{Message: "password error", Result: ResFailed})
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "password error", Result: utility.ResFailed})
 		return
 	}
-	responseWithJSON(w, http.StatusOK, Responce{Result: ResSuccess})
+	token, _ := auth.GenerateToken(&user)
+	utility.ResponseWithJSON(w, http.StatusOK, utility.Response{Result: utility.ResSuccess, Data: model.JwtToken{Token: token}})
+	// utility.ResponseWithJSON(w, http.StatusOK, utility.Response{Result: utility.ResSuccess})
 }

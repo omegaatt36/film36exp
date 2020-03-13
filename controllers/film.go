@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"film36exp/db"
 	"film36exp/model"
+	"film36exp/utility"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -22,7 +23,7 @@ func CreateOneFilm(w http.ResponseWriter, r *http.Request) {
 	newFilm.UptateAt = time.Now().Format("2006-01-02 15:04:05")
 	newFilm.CreateAt = newFilm.UptateAt
 	db.Create(db.CollectionFilm, newFilm)
-	responseWithJSON(w, http.StatusCreated, newFilm)
+	utility.ResponseWithJSON(w, http.StatusOK, utility.Response{Result: utility.ResSuccess, Data: newFilm})
 }
 
 // GetOneFilm get one roll film by "ID".
@@ -30,20 +31,20 @@ func GetOneFilm(w http.ResponseWriter, r *http.Request) {
 	var film model.Film
 	id, err := primitive.ObjectIDFromHex(mux.Vars(r)["filmID"])
 	if err != nil {
-		responseWithJSON(w, http.StatusInternalServerError, map[string]string{"message": "id error"})
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "param error", Result: utility.ResFailed})
 		return
 	}
 	singleResult := db.FindOne(db.CollectionFilm, model.Film{ID: id})
 	if singleResult.Err() != nil {
-		responseWithJSON(w, http.StatusInternalServerError, map[string]string{"message": singleResult.Err().Error()})
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "film not found", Result: utility.ResFailed})
 		return
 	}
 	err = singleResult.Decode(&film)
 	if err != nil {
-		responseWithJSON(w, http.StatusInternalServerError, map[string]string{"message": err.Error()})
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "DB decode error", Result: utility.ResFailed})
 		return
 	}
-	responseWithJSON(w, http.StatusOK, film)
+	utility.ResponseWithJSON(w, http.StatusOK, utility.Response{Result: utility.ResSuccess, Data: film})
 }
 
 // GetAllFilms get all films.
@@ -54,7 +55,7 @@ func GetAllFilms(w http.ResponseWriter, r *http.Request) {
 	defer cancle()
 	cursor, err := collection.Find(ctx, bson.M{})
 	if err != nil {
-		responseWithError(w, http.StatusInternalServerError, err)
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "DB error", Result: utility.ResFailed})
 		return
 	}
 	defer cursor.Close(ctx)
@@ -64,22 +65,22 @@ func GetAllFilms(w http.ResponseWriter, r *http.Request) {
 		films = append(films, film)
 	}
 	if err := cursor.Err(); err != err {
-		responseWithError(w, http.StatusInternalServerError, err)
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "DB error", Result: utility.ResFailed})
 		return
 	}
-	responseWithJSON(w, http.StatusOK, films)
+	utility.ResponseWithJSON(w, http.StatusOK, utility.Response{Result: utility.ResSuccess, Data: films})
 }
 
 // UpdateFilm modify one roll film by "filmID".
 func UpdateFilm(w http.ResponseWriter, r *http.Request) {
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		responseWithError(w, http.StatusInternalServerError, err)
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "param error", Result: utility.ResFailed})
 		return
 	}
 	id, err := primitive.ObjectIDFromHex(mux.Vars(r)["filmID"])
 	if err != nil {
-		responseWithJSON(w, http.StatusOK, map[string]string{"message": "id error"})
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "id error", Result: utility.ResFailed})
 		return
 	}
 	var updatedFilm model.Film
@@ -88,24 +89,25 @@ func UpdateFilm(w http.ResponseWriter, r *http.Request) {
 	updatedFilm.ID = id
 
 	if _, err := db.Update(db.CollectionFilm, id, updatedFilm); err != nil {
-		responseWithError(w, http.StatusInternalServerError, err)
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "DB update error", Result: utility.ResFailed})
 		return
 	}
-	w.WriteHeader(http.StatusNoContent)
+
+	utility.ResponseWithJSON(w, http.StatusOK, utility.Response{Result: utility.ResSuccess})
 }
 
 // DeleteFilm remove one roll film by "filmID".
 func DeleteFilm(w http.ResponseWriter, r *http.Request) {
 	id, err := primitive.ObjectIDFromHex(mux.Vars(r)["filmID"])
 	if err != nil {
-		responseWithJSON(w, http.StatusOK, map[string]string{"message": "id error"})
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "id error", Result: utility.ResFailed})
 		return
 	}
 	if _, err := db.Delete(db.CollectionFilm, id); err != nil {
-		responseWithError(w, http.StatusInternalServerError, err)
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "DB delete error", Result: utility.ResFailed})
 		return
 	}
-	w.WriteHeader(http.StatusNoContent)
+	utility.ResponseWithJSON(w, http.StatusOK, utility.Response{Result: utility.ResSuccess})
 }
 
 func isFilmExist(id primitive.ObjectID) bool {

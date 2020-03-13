@@ -14,6 +14,7 @@ type route struct {
 	Middleware mux.MiddlewareFunc
 }
 
+//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QxMjMifQ.IiR6c7GX21WVyZpM1_jQjVCejPWRcuW45niXd6OXnPY
 var routes []route
 
 func init() {

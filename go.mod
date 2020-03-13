@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/appleboy/gofight/v2 v2.1.2
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gorilla/handlers v1.4.2
 	github.com/gorilla/mux v1.7.4
 	github.com/kr/pretty v0.2.0 // indirect

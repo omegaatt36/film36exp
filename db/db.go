@@ -16,7 +16,9 @@ const (
 	// CollectionFilm a collection name for CRUD film
 	CollectionFilm = "films"
 	// CollectionPic a collection name for CRU pic
-	CollectionPic = "Pics"
+	CollectionPic = "pics"
+	// CollectionUser a collection name for CR user
+	CollectionUser = "users"
 )
 
 // SetClint initialize client

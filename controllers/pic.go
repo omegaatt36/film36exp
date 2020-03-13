@@ -22,6 +22,7 @@ func CreatePic(w http.ResponseWriter, r *http.Request) {
 	var newPic model.Pic
 	_ = json.NewDecoder(r.Body).Decode(&newPic)
 	newPic.ID = primitive.NewObjectID()
+	newPic.UserName = r.Header.Get("userName")
 	filmID := mux.Vars(r)["filmID"]
 	fid, _ := primitive.ObjectIDFromHex(filmID)
 	if isFilmExist(fid) == false {
@@ -50,7 +51,7 @@ func UpdatePic(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(reqBody, &updatedPic)
 	updatedPic.ID = id
 
-	if _, err := db.Update(db.CollectionPic, id, updatedPic); err != nil {
+	if _, err := db.Update(db.CollectionPic, id, r.Header.Get("userName"), updatedPic); err != nil {
 		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "DB update error", Result: utility.ResFailed})
 		return
 	}
@@ -74,7 +75,7 @@ func GetPics(w http.ResponseWriter, r *http.Request) {
 	for cursor.Next(ctx) {
 		var pic model.Pic
 		cursor.Decode(&pic)
-		if pic.FID == fid {
+		if pic.FID == fid && pic.UserName == r.Header.Get("userName") {
 			pics = append(pics, pic)
 		}
 	}

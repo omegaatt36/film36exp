@@ -19,6 +19,7 @@ func isUserExist(userName string) bool {
 	return true
 }
 
+// Register name & cryp(pwd) into DB
 func Register(w http.ResponseWriter, r *http.Request) {
 	var user model.User
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -44,6 +45,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	utility.ResponseWithJSON(w, http.StatusOK, utility.Response{Result: utility.ResSuccess})
 }
 
+// Login verify name & pwd and return token
 func Login(w http.ResponseWriter, r *http.Request) {
 	var user model.User
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -70,5 +72,4 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	token, _ := auth.GenerateToken(&user)
 	utility.ResponseWithJSON(w, http.StatusOK, utility.Response{Result: utility.ResSuccess, Data: model.JwtToken{Token: token}})
-	// utility.ResponseWithJSON(w, http.StatusOK, utility.Response{Result: utility.ResSuccess})
 }

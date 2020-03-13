@@ -7,6 +7,7 @@ import (
 // Film recode one film infomation.
 type Film struct {
 	ID              primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	UserName        string             `josn:"-,omitempty" bson:"userName,omitempty"`
 	Vendor          string             `json:"Vendor,omitempty" bson:"Vendor,omitempty"`
 	Production      string             `json:"Production,omitempty" bson:"Production,omitempty"`
 	ISO             string             `json:"ISO,omitempty" bson:"ISO,omitempty"`
@@ -22,6 +23,7 @@ type Film struct {
 type Pic struct {
 	ID       primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	FID      primitive.ObjectID `json:"FID,omitempty" bson:"FID,omitempty"`
+	UserName string             `josn:"-,omitempty" bson:"userName,omitempty"`
 	Camera   string             `json:"Camera,omitempty" bson:"Camera,omitempty"`
 	Lens     string             `json:"Lens,omitempty" bson:"Lens,omitempty"`
 	Aperture string             `json:"Aperture,omitempty" bson:"Aperture,omitempty"`

@@ -20,6 +20,7 @@ func CreateOneFilm(w http.ResponseWriter, r *http.Request) {
 	var newFilm model.Film
 	_ = json.NewDecoder(r.Body).Decode(&newFilm)
 	newFilm.ID = primitive.NewObjectID()
+	newFilm.UserName = r.Header.Get("userName")
 	newFilm.UptateAt = time.Now().Format("2006-01-02 15:04:05")
 	newFilm.CreateAt = newFilm.UptateAt
 	db.Create(db.CollectionFilm, newFilm)
@@ -34,7 +35,7 @@ func GetOneFilm(w http.ResponseWriter, r *http.Request) {
 		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "param error", Result: utility.ResFailed})
 		return
 	}
-	singleResult := db.FindOne(db.CollectionFilm, model.Film{ID: id})
+	singleResult := db.FindOne(db.CollectionFilm, model.Film{ID: id, UserName: r.Header.Get("userName")})
 	if singleResult.Err() != nil {
 		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "film not found", Result: utility.ResFailed})
 		return
@@ -59,10 +60,13 @@ func GetAllFilms(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer cursor.Close(ctx)
+	userName := r.Header.Get("userName")
 	for cursor.Next(ctx) {
 		var film model.Film
 		cursor.Decode(&film)
-		films = append(films, film)
+		if film.UserName == userName {
+			films = append(films, film)
+		}
 	}
 	if err := cursor.Err(); err != err {
 		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "DB error", Result: utility.ResFailed})
@@ -87,8 +91,9 @@ func UpdateFilm(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(reqBody, &updatedFilm)
 	updatedFilm.UptateAt = time.Now().Format("2006-01-02 15:04:05")
 	updatedFilm.ID = id
+	// updatedFilm.UserName = r.Header.Get("userName")
 
-	if _, err := db.Update(db.CollectionFilm, id, updatedFilm); err != nil {
+	if _, err := db.Update(db.CollectionFilm, id, r.Header.Get("userName"), updatedFilm); err != nil {
 		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "DB update error", Result: utility.ResFailed})
 		return
 	}
@@ -103,7 +108,7 @@ func DeleteFilm(w http.ResponseWriter, r *http.Request) {
 		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "id error", Result: utility.ResFailed})
 		return
 	}
-	if _, err := db.Delete(db.CollectionFilm, id); err != nil {
+	if _, err := db.Delete(db.CollectionFilm, id, r.Header.Get("userName")); err != nil {
 		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "DB delete error", Result: utility.ResFailed})
 		return
 	}

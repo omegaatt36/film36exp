@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"film36exp/auth"
 	"film36exp/controllers"
 	"net/http"
 
@@ -14,20 +15,19 @@ type route struct {
 	Middleware mux.MiddlewareFunc
 }
 
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QxMjMifQ.IiR6c7GX21WVyZpM1_jQjVCejPWRcuW45niXd6OXnPY
 var routes []route
 
 func init() {
 	register("GET", "/", controllers.GetDefault, nil)
-	register("POST", "/Createfilm", controllers.CreateOneFilm, nil)
-	register("GET", "/films", controllers.GetAllFilms, nil)
-	register("GET", "/films/{filmID}", controllers.GetOneFilm, nil)
-	register("PATCH", "/films/{filmID}", controllers.UpdateFilm, nil)
-	register("DELETE", "/films/{filmID}", controllers.DeleteFilm, nil)
+	register("POST", "/Createfilm", controllers.CreateOneFilm, auth.TokenMiddleware)
+	register("GET", "/films", controllers.GetAllFilms, auth.TokenMiddleware)
+	register("GET", "/films/{filmID}", controllers.GetOneFilm, auth.TokenMiddleware)
+	register("PATCH", "/films/{filmID}", controllers.UpdateFilm, auth.TokenMiddleware)
+	register("DELETE", "/films/{filmID}", controllers.DeleteFilm, auth.TokenMiddleware)
 
-	register("POST", "/CreatePic/{filmID}", controllers.CreatePic, nil)
-	register("GET", "/pics/{filmID}", controllers.GetPics, nil)
-	register("PATCH", "/pics/{picID}", controllers.UpdatePic, nil)
+	register("POST", "/CreatePic/{filmID}", controllers.CreatePic, auth.TokenMiddleware)
+	register("GET", "/pics/{filmID}", controllers.GetPics, auth.TokenMiddleware)
+	register("PATCH", "/pics/{picID}", controllers.UpdatePic, auth.TokenMiddleware)
 
 	register("POST", "/user/register", controllers.Register, nil)
 	register("POST", "/user/login", controllers.Login, nil)
@@ -37,10 +37,10 @@ func init() {
 func NewRouter() *mux.Router {
 	r := mux.NewRouter()
 	for _, route := range routes {
-		r.HandleFunc(route.Pattern, route.Handler).Methods(route.Method)
-
-		if route.Middleware != nil {
-			r.Use(route.Middleware)
+		if route.Middleware == nil {
+			r.HandleFunc(route.Pattern, route.Handler).Methods(route.Method)
+		} else {
+			r.Handle(route.Pattern, route.Middleware(route.Handler)).Methods(route.Method)
 		}
 	}
 	return r

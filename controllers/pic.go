@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"film36exp/db"
 	"film36exp/model"
+	"film36exp/utility"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -21,39 +22,40 @@ func CreatePic(w http.ResponseWriter, r *http.Request) {
 	var newPic model.Pic
 	_ = json.NewDecoder(r.Body).Decode(&newPic)
 	newPic.ID = primitive.NewObjectID()
+	newPic.UserName = r.Header.Get("userName")
 	filmID := mux.Vars(r)["filmID"]
 	fid, _ := primitive.ObjectIDFromHex(filmID)
 	if isFilmExist(fid) == false {
-		responseWithJSON(w, http.StatusInternalServerError, map[string]string{"message": "film not found."})
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "film not found", Result: utility.ResFailed})
 		return
 	}
 	newPic.FID = fid
 	db.Create(db.CollectionPic, newPic)
 
-	responseWithJSON(w, http.StatusCreated, newPic)
+	utility.ResponseWithJSON(w, http.StatusOK, utility.Response{Result: utility.ResSuccess, Data: newPic})
 }
 
 // UpdatePic modify one pick by "picID".
 func UpdatePic(w http.ResponseWriter, r *http.Request) {
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		responseWithError(w, http.StatusInternalServerError, err)
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "param error", Result: utility.ResFailed})
 		return
 	}
 	id, err := primitive.ObjectIDFromHex(mux.Vars(r)["picID"])
 	if err != nil {
-		responseWithJSON(w, http.StatusOK, map[string]string{"message": "id error"})
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "id not found", Result: utility.ResFailed})
 		return
 	}
 	var updatedPic model.Pic
 	json.Unmarshal(reqBody, &updatedPic)
 	updatedPic.ID = id
 
-	if _, err := db.Update(db.CollectionPic, id, updatedPic); err != nil {
-		responseWithError(w, http.StatusInternalServerError, err)
+	if _, err := db.Update(db.CollectionPic, id, r.Header.Get("userName"), updatedPic); err != nil {
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "DB update error", Result: utility.ResFailed})
 		return
 	}
-	w.WriteHeader(http.StatusNoContent)
+	utility.ResponseWithJSON(w, http.StatusOK, utility.Response{Result: utility.ResSuccess})
 }
 
 // GetPics get pics in the film by "filmID".
@@ -64,7 +66,7 @@ func GetPics(w http.ResponseWriter, r *http.Request) {
 	defer cancle()
 	cursor, err := collection.Find(ctx, bson.M{})
 	if err != nil {
-		responseWithError(w, http.StatusInternalServerError, err)
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: "pic not found", Result: utility.ResFailed})
 		return
 	}
 	defer cursor.Close(ctx)
@@ -73,13 +75,13 @@ func GetPics(w http.ResponseWriter, r *http.Request) {
 	for cursor.Next(ctx) {
 		var pic model.Pic
 		cursor.Decode(&pic)
-		if pic.FID == fid {
+		if pic.FID == fid && pic.UserName == r.Header.Get("userName") {
 			pics = append(pics, pic)
 		}
 	}
 	if err := cursor.Err(); err != err {
-		responseWithError(w, http.StatusInternalServerError, err)
+		utility.ResponseWithJSON(w, http.StatusInternalServerError, utility.Response{Message: err.Error(), Result: utility.ResFailed})
 		return
 	}
-	responseWithJSON(w, http.StatusOK, pics)
+	utility.ResponseWithJSON(w, http.StatusOK, utility.Response{Result: utility.ResSuccess, Data: pics})
 }

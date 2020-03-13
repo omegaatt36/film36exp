@@ -16,7 +16,9 @@ const (
 	// CollectionFilm a collection name for CRUD film
 	CollectionFilm = "films"
 	// CollectionPic a collection name for CRU pic
-	CollectionPic = "Pics"
+	CollectionPic = "pics"
+	// CollectionUser a collection name for CR user
+	CollectionUser = "users"
 )
 
 // SetClint initialize client
@@ -41,8 +43,8 @@ func Create(collectionName string, item interface{}) (*mongo.InsertOneResult, er
 }
 
 // Delete one obj from specify collection
-func Delete(collectionName string, _id primitive.ObjectID) (*mongo.DeleteResult, error) {
-	filter := bson.M{"_id": bson.M{"$eq": _id}}
+func Delete(collectionName string, _id primitive.ObjectID, userName string) (*mongo.DeleteResult, error) {
+	filter := bson.M{"_id": bson.M{"$eq": _id}, "userName": bson.M{"$eq": userName}}
 	collection := client.Database(database).Collection(collectionName)
 	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancle()
@@ -50,8 +52,8 @@ func Delete(collectionName string, _id primitive.ObjectID) (*mongo.DeleteResult,
 }
 
 // Update one obj from specify collection
-func Update(collectionName string, _id primitive.ObjectID, item interface{}) (*mongo.UpdateResult, error) {
-	filter := bson.M{"_id": bson.M{"$eq": _id}}
+func Update(collectionName string, _id primitive.ObjectID, userName string, item interface{}) (*mongo.UpdateResult, error) {
+	filter := bson.M{"_id": bson.M{"$eq": _id}, "userName": bson.M{"$eq": userName}}
 	update := bson.M{"$set": item}
 	collection := client.Database(database).Collection(collectionName)
 	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)

@@ -8,7 +8,7 @@ require (
 	github.com/gorilla/handlers v1.4.2
 	github.com/gorilla/mux v1.7.4
 	github.com/meatballhat/negroni-logrus v1.1.0
-	github.com/sirupsen/logrus v1.4.2
+	github.com/sirupsen/logrus v1.5.0
 	github.com/stretchr/testify v1.5.1
 	github.com/urfave/negroni v1.0.0
 	go.mongodb.org/mongo-driver v1.3.1

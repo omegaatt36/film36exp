@@ -11,6 +11,6 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/stretchr/testify v1.5.1
 	github.com/urfave/negroni v1.0.0
-	go.mongodb.org/mongo-driver v1.3.1
+	go.mongodb.org/mongo-driver v1.3.2
 	golang.org/x/crypto v0.0.0-20200311171314-f7b00557c8c4
 )

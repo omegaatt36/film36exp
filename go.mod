@@ -7,8 +7,9 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gorilla/handlers v1.5.0
 	github.com/gorilla/mux v1.8.0
-	github.com/meatballhat/negroni-logrus v1.1.0
-	github.com/sirupsen/logrus v1.6.0
+	github.com/konsorten/go-windows-terminal-sequences v1.0.3 // indirect
+	github.com/meatballhat/negroni-logrus v1.1.1
+	github.com/sirupsen/logrus v1.7.0
 	github.com/stretchr/testify v1.6.1
 	github.com/urfave/negroni v1.0.0
 	go.mongodb.org/mongo-driver v1.4.0

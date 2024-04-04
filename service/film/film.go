@@ -50,7 +50,7 @@ func (s *Service) CreateFilmLog(ctx context.Context, req CreateFilmLogRequest) e
 		return err
 	}
 
-	return s.filmRepo.SaveFilmLog(ctx, &domain.FilmLog{
+	return s.filmRepo.CreateFilmLog(ctx, &domain.FilmLog{
 		UserID:       req.UserID,
 		Format:       req.Format,
 		Negative:     req.Negative,
@@ -116,7 +116,7 @@ func (s *Service) UpdateFilmLog(ctx context.Context, req UpdateFilmLogRequest) e
 		filmLog.Notes = req.Notes
 	}
 
-	return s.filmRepo.SaveFilmLog(ctx, filmLog)
+	return s.filmRepo.UpdateFilmLog(ctx, filmLog)
 }
 
 // DeleteFilmLog delete a film log

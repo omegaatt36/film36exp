@@ -23,7 +23,7 @@ type FilmLog struct {
 // Photo is the smallest unit.
 type Photo struct {
 	ID           uint
-	FilmLogID    string
+	FilmLogID    uint
 	Aperture     *float64
 	ShutterSpeed *float64
 	Date         *time.Time
@@ -38,13 +38,15 @@ type FilmFormat string
 
 // FilmRepository defines a film repository
 type FilmRepository interface {
+	CreateFilmLog(ctx context.Context, filmLog *FilmLog) error
 	ListFilmLogs() ([]*FilmLog, error)
 	GetFilmLog(ctx context.Context, filmLogID uint) (*FilmLog, error)
-	SaveFilmLog(ctx context.Context, filmLog *FilmLog) error
+	UpdateFilmLog(ctx context.Context, filmLog *FilmLog) error
 	DeleteFilmLog(ctx context.Context, filmLogID uint) error
 
+	CreatePhoto(ctx context.Context, photo *Photo) error
 	ListPhotos(ctx context.Context, filmLogID uint) ([]*Photo, error)
 	GetPhoto(ctx context.Context, photoID uint) (*Photo, error)
-	SavePhoto(ctx context.Context, photo *Photo) error
+	UpdatePhoto(ctx context.Context, photo *Photo) error
 	DeletePhoto(ctx context.Context, photoID uint) error
 }

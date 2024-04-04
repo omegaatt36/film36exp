@@ -107,7 +107,7 @@ func (s *filmServiceTestSuite) TestUpdateFilm() {
 		ID: 2,
 	})
 
-	s.filmRepo.SaveFilmLog(context.TODO(), &domain.FilmLog{
+	s.filmRepo.CreateFilmLog(context.TODO(), &domain.FilmLog{
 		ID:           2,
 		UserID:       2,
 		Format:       domain.FilmFormat135,

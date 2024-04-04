@@ -48,15 +48,22 @@ func NewServer() *Server {
 }
 
 // Start starts the server
-func (s *Server) Start(ctx context.Context, addr string) {
+func (s *Server) Start(ctx context.Context) <-chan struct{} {
 	s.registerRoutes()
 
 	srv := &http.Server{
-		Addr:    addr,
+		Addr:    defaultConfig.listenAddr,
 		Handler: s.router,
 	}
 
+	closeChain := make(chan struct{})
 	go func() {
+		defer func() {
+			logging.Info("api stopped")
+			closeChain <- struct{}{}
+			close(closeChain)
+		}()
+
 		<-ctx.Done()
 		if err := srv.Shutdown(ctx); err != nil {
 			logging.Fatal("Server Shutdown: ", err)
@@ -64,11 +71,15 @@ func (s *Server) Start(ctx context.Context, addr string) {
 	}()
 
 	logging.Info("starts serving...")
-	if err := srv.ListenAndServe(); err != nil &&
-		!errors.Is(err, http.ErrServerClosed) {
-		logging.Fatalf("listen: %s\n", err)
-	}
 
+	go func() {
+		if err := srv.ListenAndServe(); err != nil &&
+			!errors.Is(err, http.ErrServerClosed) {
+			logging.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	return closeChain
 }
 
 func (s *Server) registerRoutes() {

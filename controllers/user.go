@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"film36exp/auth"
-	"film36exp/db"
-	"film36exp/model"
-	"film36exp/utility"
+	"github.com/omegaatt36/film36exp/auth"
+	"github.com/omegaatt36/film36exp/db"
+	"github.com/omegaatt36/film36exp/model"
+	"github.com/omegaatt36/film36exp/utility"
 
 	"golang.org/x/crypto/bcrypt"
 )

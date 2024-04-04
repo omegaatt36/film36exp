@@ -1,11 +1,12 @@
 package main
 
 import (
-	"film36exp/routes"
 	"net/http"
 	"os"
 	"reflect"
 	"testing"
+
+	"github.com/omegaatt36/film36exp/routes"
 
 	"github.com/appleboy/gofight/v2"
 	"github.com/stretchr/testify/assert"
@@ -40,7 +41,7 @@ func TestGetDefault(t *testing.T) {
 		SetDebug(true).
 		Run(routes.NewRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 
-			assert.Equal(t, "film36exp", r.Body.String())
+			assert.Equal(t, "github.com/omegaatt36/film36exp", r.Body.String())
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 }

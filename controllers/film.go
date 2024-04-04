@@ -3,12 +3,13 @@ package controllers
 import (
 	"context"
 	"encoding/json"
-	"film36exp/db"
-	"film36exp/model"
-	"film36exp/utility"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/omegaatt36/film36exp/db"
+	"github.com/omegaatt36/film36exp/model"
+	"github.com/omegaatt36/film36exp/utility"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"

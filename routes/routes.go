@@ -1,9 +1,10 @@
 package routes
 
 import (
-	"film36exp/auth"
-	"film36exp/controllers"
 	"net/http"
+
+	"github.com/omegaatt36/film36exp/auth"
+	"github.com/omegaatt36/film36exp/controllers"
 
 	"github.com/gorilla/mux"
 )

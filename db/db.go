@@ -12,7 +12,7 @@ import (
 var client *mongo.Client
 
 const (
-	database = "film36exp"
+	database = "github.com/omegaatt36/film36exp"
 	// CollectionFilm a collection name for CRUD film
 	CollectionFilm = "films"
 	// CollectionPic a collection name for CRU pic

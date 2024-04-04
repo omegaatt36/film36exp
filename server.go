@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
-	"film36exp/db"
-	"film36exp/routes"
 	"fmt"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/omegaatt36/film36exp/db"
+	"github.com/omegaatt36/film36exp/routes"
 
 	"github.com/gorilla/handlers"
 	negronilogrus "github.com/meatballhat/negroni-logrus"

@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strings"
 
-	"film36exp/model"
-	"film36exp/utility"
+	"github.com/omegaatt36/film36exp/model"
+	"github.com/omegaatt36/film36exp/utility"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )

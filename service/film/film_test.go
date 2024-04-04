@@ -103,11 +103,11 @@ func (s *filmServiceTestSuite) TestUpdateFilmWithInvalidReq() {
 }
 
 func (s *filmServiceTestSuite) TestUpdateFilm() {
-	s.userRepo.CreateUser(context.TODO(), &domain.User{
+	s.NoError(s.userRepo.CreateUser(context.TODO(), &domain.User{
 		ID: 2,
-	})
+	}))
 
-	s.filmRepo.CreateFilmLog(context.TODO(), &domain.FilmLog{
+	s.NoError(s.filmRepo.CreateFilmLog(context.TODO(), &domain.FilmLog{
 		ID:           2,
 		UserID:       2,
 		Format:       domain.FilmFormat135,
@@ -117,7 +117,7 @@ func (s *filmServiceTestSuite) TestUpdateFilm() {
 		PurchaseDate: util.Pointer(time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)),
 		LoadDate:     util.Pointer(time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)),
 		Notes:        "",
-	})
+	}))
 
 	req := film.UpdateFilmLogRequest{
 		FilmLogID: 2,

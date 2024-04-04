@@ -1,6 +1,25 @@
-FROM golang:1.14.0-buster
-WORKDIR /film36exp
-ADD . /film36exp
-RUN cd /film36exp && go build
-EXPOSE 8080
-ENTRYPOINT ./film36exp
+FROM golang:1.22-alpine as build
+
+WORKDIR /go/src/app
+
+COPY ["go.mod", "go.sum", "./"]
+
+RUN ["go", "mod", "download"]
+
+COPY . .
+
+ENV APP_NAME=film36exp
+
+RUN ["go", "build", "-o", "build/${APP_NAME}" ,"./cmd/api"]
+
+# FROM build as dev
+
+# CMD ["go", "run", "./cmd/api"]
+
+FROM gcr.io/distroless/static-debian12 as prod
+
+WORKDIR /home/app/
+
+COPY --from=build /go/src/app/build/${APP_NAME} ./
+
+CMD ["./${APP_NAME}"]

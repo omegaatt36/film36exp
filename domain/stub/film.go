@@ -151,7 +151,7 @@ func (repo *InMemoryFilmRepository) UpdatePhoto(ctx context.Context, photo *doma
 		existPhoto.Date = photo.Date
 	}
 
-	if photo.Description != "" {
+	if photo.Description != nil {
 		existPhoto.Description = photo.Description
 	}
 
@@ -159,7 +159,7 @@ func (repo *InMemoryFilmRepository) UpdatePhoto(ctx context.Context, photo *doma
 		existPhoto.Tags = photo.Tags
 	}
 
-	if photo.Location != "" {
+	if photo.Location != nil {
 		existPhoto.Location = photo.Location
 	}
 

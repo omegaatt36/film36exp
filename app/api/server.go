@@ -85,13 +85,19 @@ func (s *Server) Start(ctx context.Context) <-chan struct{} {
 func (s *Server) registerRoutes() {
 	v1 := s.router.Group("v1")
 
-	groupFilmLog := v1.Group("/film_log")
+	groupFilmLog := v1.Group("/film_logs")
 	groupFilmLog.POST("/", s.filmController.CreateFilmLog)
 	groupFilmLog.GET("/:id", s.filmController.GetFilmLog)
 	groupFilmLog.PATCH("/:id", s.filmController.UpdateFilmLog)
 	groupFilmLog.DELETE("/:id", s.filmController.DeleteFilmLog)
 
-	groupUser := v1.Group("/user")
+	groupPhoto := v1.Group("/photos")
+	groupPhoto.POST("/", s.filmController.CreatePhoto)
+	groupPhoto.GET("/:id", s.filmController.GetPhoto)
+	groupPhoto.PATCH("/:id", s.filmController.UpdatePhoto)
+	groupPhoto.DELETE("/:id", s.filmController.DeletePhoto)
+
+	groupUser := v1.Group("/users")
 	groupUser.POST("/", s.userController.CreateUser)
 	groupUser.GET("/:id", s.userController.GetUser)
 	groupUser.PATCH("/:id", s.userController.UpdateUser)

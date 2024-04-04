@@ -25,11 +25,11 @@ type Photo struct {
 	ID           uint
 	FilmLogID    uint
 	Aperture     *float64
-	ShutterSpeed *float64
+	ShutterSpeed *string
 	Date         *time.Time
-	Description  string
+	Description  *string
 	Tags         []string
-	Location     string
+	Location     *string
 }
 
 // FilmFormat is the type of film.

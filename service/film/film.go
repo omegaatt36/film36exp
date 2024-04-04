@@ -76,7 +76,7 @@ type UpdateFilmLogRequest struct {
 	ISO          *int
 	PurchaseDate *time.Time
 	LoadDate     *time.Time
-	Notes        string
+	Notes        *string
 }
 
 // UpdateFilmLog update a film log
@@ -112,8 +112,8 @@ func (s *Service) UpdateFilmLog(ctx context.Context, req UpdateFilmLogRequest) e
 	filmLog.PurchaseDate = req.PurchaseDate
 	filmLog.LoadDate = req.LoadDate
 
-	if req.Notes != "" {
-		filmLog.Notes = req.Notes
+	if req.Notes != nil {
+		filmLog.Notes = *req.Notes
 	}
 
 	return s.filmRepo.UpdateFilmLog(ctx, filmLog)

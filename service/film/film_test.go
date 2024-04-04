@@ -124,7 +124,7 @@ func (s *filmServiceTestSuite) TestUpdateFilm() {
 		UserID:    util.Pointer(uint(2)),
 
 		Format: util.Pointer(domain.FilmFormat120),
-		Notes:  "updated",
+		Notes:  util.Pointer("updated"),
 	}
 
 	s.NoError(s.filmService.UpdateFilmLog(context.TODO(), req))
@@ -142,7 +142,7 @@ func (s *filmServiceTestSuite) TestUpdateFilm() {
 
 	// changed
 	s.Equal(*req.UserID, actualFilmLog.UserID)
-	s.Equal(req.Notes, actualFilmLog.Notes)
+	s.Equal(*req.Notes, actualFilmLog.Notes)
 }
 
 func TestFilmServiceSuite(t *testing.T) {

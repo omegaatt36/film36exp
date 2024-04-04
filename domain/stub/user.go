@@ -26,6 +26,7 @@ func (repo *inMemoryUserRepository) CreateUser(ctx context.Context, user *domain
 		repo.userAutoIncrementID++
 		user.ID = repo.userAutoIncrementID
 	}
+
 	repo.users[user.ID] = user
 	return nil
 }
@@ -38,8 +39,27 @@ func (repo *inMemoryUserRepository) GetUser(ctx context.Context, userID uint) (*
 	return user, nil
 }
 
-func (repo *inMemoryUserRepository) SaveUser(ctx context.Context, user *domain.User) error {
-	repo.users[user.ID] = user
+func (repo *inMemoryUserRepository) UpdateUser(ctx context.Context, user *domain.User) error {
+	if user.ID == 0 {
+		return errors.New("invalid user id")
+	}
+
+	u, exist := repo.users[user.ID]
+	if !exist {
+		return errors.New("user not found")
+	}
+	if user.Name != "" {
+		u.Name = user.Name
+	}
+	if user.Email != "" {
+		u.Email = user.Email
+	}
+	if user.Password != nil {
+		u.Password = nil
+	}
+
+	repo.users[user.ID] = u
+
 	return nil
 }
 

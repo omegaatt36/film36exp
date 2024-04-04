@@ -6,7 +6,7 @@ import "context"
 type User struct {
 	ID       uint
 	Name     string
-	Email    *string
+	Email    string
 	Password *string
 }
 
@@ -14,6 +14,6 @@ type User struct {
 type UserRepository interface {
 	CreateUser(context.Context, *User) error
 	GetUser(context.Context, uint) (*User, error)
-	SaveUser(context.Context, *User) error
+	UpdateUser(context.Context, *User) error
 	DeleteUser(context.Context, uint) error
 }

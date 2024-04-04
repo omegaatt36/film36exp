@@ -8,9 +8,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var (
-	logger *zap.Logger
-)
+var logger *zap.Logger
 
 // Init initializes the logger.
 func Init(isProd bool) {
@@ -78,8 +76,10 @@ func fromContext(ctx context.Context) *zap.Logger {
 	return instance.WithOptions(zap.AddCallerSkip(1))
 }
 
-type printWrapper func(args ...any)
-type printfWrapper func(template string, args ...any)
+type (
+	printWrapper  func(args ...any)
+	printfWrapper func(template string, args ...any)
+)
 
 var (
 	Info   printWrapper

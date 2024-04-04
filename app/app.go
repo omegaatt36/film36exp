@@ -66,7 +66,6 @@ func (a *App) wrapMain(c *cli.Context) error {
 
 // Run setups everything and runs Main.
 func (a *App) Run() {
-
 	app := cli.NewApp()
 	app.Flags = a.Flags
 	app.Flags = append(app.Flags, cliflag.Globals()...)

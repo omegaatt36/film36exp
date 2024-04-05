@@ -1,3 +1,7 @@
+DOCKER=docker
+
+PROJECT_NAME=film36exp
+
 .PHONY: fmt check test
 
 all: fmt check test
@@ -12,6 +16,24 @@ check:
 	golangci-lint run
 	misspell -error */**
 	@echo 'staticcheck' && staticcheck $(shell go list ./...)
+
+setup: setup-postgres
+
+
+setup-postgres:
+	@if ! $(DOCKER) ps | /bin/grep ${PROJECT_NAME}-postgres-local; then \
+		$(DOCKER) run --name ${PROJECT_NAME}-postgres-local \
+			-p 5432:5432 \
+			-v ${PROJECT_NAME}_data:/var/lib/postgresql/data \
+			-e POSTGRES_DB=${DB_NAME} \
+			-e POSTGRES_USER=${DB_USER} \
+			-e POSTGRES_PASSWORD=${DB_PASSWORD} \
+			--restart always \
+			-d postgres:16;\
+	fi
+
+remove:
+	$(DOCKER) rm -f ${PROJECT_NAME}-postgres-local
 
 test:
 	go test ./...

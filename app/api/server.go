@@ -3,12 +3,14 @@ package api
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/omegaatt36/film36exp/app/api/film"
 	"github.com/omegaatt36/film36exp/app/api/user"
 	"github.com/omegaatt36/film36exp/domain/stub"
 	"github.com/omegaatt36/film36exp/logging"
+	"github.com/omegaatt36/film36exp/rdb/database"
 	filmService "github.com/omegaatt36/film36exp/service/film"
 	userService "github.com/omegaatt36/film36exp/service/user"
 
@@ -27,6 +29,8 @@ type Server struct {
 func NewServer() *Server {
 	apiEngine := gin.New()
 	apiEngine.RedirectTrailingSlash = true
+
+	database.GetDB(database.Default)
 
 	userRepo := stub.NewInMemoryUserRepository()
 
@@ -52,7 +56,7 @@ func (s *Server) Start(ctx context.Context) <-chan struct{} {
 	s.registerRoutes()
 
 	srv := &http.Server{
-		Addr:    defaultConfig.listenAddr,
+		Addr:    fmt.Sprintf(":%s", defaultConfig.appPort),
 		Handler: s.router,
 	}
 

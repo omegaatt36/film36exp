@@ -18,7 +18,7 @@ type Env string
 
 type config struct {
 	appEnvironment string
-	listenAddr     string
+	appPort        string
 }
 
 var defaultConfig config
@@ -39,12 +39,12 @@ func (cfg *config) CliFlags() []cli.Flag {
 		DefaultText: EnvLocal.String(),
 		Value:       EnvLocal.String(),
 	}, &cli.StringFlag{
-		Name:        "listen-addr",
-		EnvVars:     []string{"LISTEN_ADDR"},
-		Destination: &cfg.listenAddr,
+		Name:        "app-port",
+		EnvVars:     []string{"APP_PORT"},
+		Destination: &cfg.appPort,
 		Required:    false,
-		DefaultText: ":8070",
-		Value:       ":8070",
+		DefaultText: "8070",
+		Value:       "8070",
 	})
 
 	return flags

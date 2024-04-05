@@ -51,8 +51,8 @@ func (repo *inMemoryUserRepository) UpdateUser(ctx context.Context, user *domain
 	if user.Name != "" {
 		u.Name = user.Name
 	}
-	if user.Email != "" {
-		u.Email = user.Email
+	if user.Account != "" {
+		u.Account = user.Account
 	}
 	if user.Password != nil {
 		u.Password = nil

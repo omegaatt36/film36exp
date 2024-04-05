@@ -6,7 +6,7 @@ import "context"
 type User struct {
 	ID       uint
 	Name     string
-	Email    string
+	Account  string
 	Password *string
 }
 

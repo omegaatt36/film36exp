@@ -23,9 +23,10 @@ func NewService(userRepo domain.UserRepository) *Service {
 	}
 }
 
+// CreateUserRequest defines a create user request
 type CreateUserRequest struct {
 	Name     string `validate:"required"`
-	Email    string `validate:"email"`
+	Account  string `validate:"required"`
 	Password string `validate:"required,min=8,max=32"`
 }
 
@@ -50,7 +51,7 @@ func (s *Service) CreateUser(ctx context.Context, req CreateUserRequest) error {
 
 	return s.userRepo.CreateUser(ctx, &domain.User{
 		Name:     req.Name,
-		Email:    req.Email,
+		Account:  req.Account,
 		Password: &hashedPassword,
 	})
 }
@@ -70,7 +71,7 @@ func (s *Service) GetUser(ctx context.Context, userID uint) (*domain.User, error
 type UpdateUserRequest struct {
 	UserID   uint
 	Name     *string
-	Email    *string
+	Account  *string
 	Password *string
 }
 
@@ -88,8 +89,8 @@ func (s *Service) UpdateUser(ctx context.Context, req UpdateUserRequest) error {
 		u.Name = *req.Name
 	}
 
-	if req.Email != nil {
-		u.Email = *req.Email
+	if req.Account != nil {
+		u.Account = *req.Account
 	}
 
 	if req.Password != nil {

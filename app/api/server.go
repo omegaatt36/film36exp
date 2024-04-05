@@ -85,6 +85,8 @@ func (s *Server) Start(ctx context.Context) <-chan struct{} {
 func (s *Server) registerRoutes() {
 	v1 := s.router.Group("v1")
 
+	v1.Use(injectLogging([]string{}), recovery())
+
 	groupFilmLog := v1.Group("/film_logs")
 	groupFilmLog.POST("/", s.filmController.CreateFilmLog)
 	groupFilmLog.GET("/:id", s.filmController.GetFilmLog)

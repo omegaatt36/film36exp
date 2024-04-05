@@ -58,6 +58,7 @@ func (s *Service) CreateFilmLog(ctx context.Context, req CreateFilmLogRequest) e
 		ISO:          req.ISO,
 		PurchaseDate: req.PurchaseDate,
 		LoadDate:     req.LoadDate,
+		Notes:        req.Notes,
 	})
 }
 

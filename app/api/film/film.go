@@ -55,8 +55,8 @@ type createFilmLogRequest struct {
 	Negative     *bool             `json:"negative"`
 	Brand        *string           `json:"brand"`
 	ISO          *int              `json:"iso"`
-	PurchaseDate *time.Time        `json:"purchase_date"`
-	LoadDate     *time.Time        `json:"load_date"`
+	PurchaseDate *int64            `json:"purchase_date"`
+	LoadDate     *int64            `json:"load_date"`
 	Notes        string            `json:"notes"`
 }
 
@@ -67,16 +67,24 @@ func (x *Controller) CreateFilmLog(c *gin.Context) {
 		return
 	}
 
-	if err := x.filmService.CreateFilmLog(c.Request.Context(), film.CreateFilmLogRequest{
-		UserID:       req.UserID,
-		Format:       req.Format,
-		Negative:     req.Negative,
-		Brand:        req.Brand,
-		ISO:          req.ISO,
-		PurchaseDate: req.PurchaseDate,
-		LoadDate:     req.LoadDate,
-		Notes:        req.Notes,
-	}); err != nil {
+	createFilmLogRequest := film.CreateFilmLogRequest{
+		UserID:   req.UserID,
+		Format:   req.Format,
+		Negative: req.Negative,
+		Brand:    req.Brand,
+		ISO:      req.ISO,
+		Notes:    req.Notes,
+	}
+
+	if req.PurchaseDate != nil {
+		createFilmLogRequest.PurchaseDate = util.Pointer(time.Unix(*req.PurchaseDate, 0).UTC())
+	}
+
+	if req.LoadDate != nil {
+		createFilmLogRequest.LoadDate = util.Pointer(time.Unix(*req.LoadDate, 0).UTC())
+	}
+
+	if err := x.filmService.CreateFilmLog(c.Request.Context(), createFilmLogRequest); err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
@@ -110,8 +118,8 @@ type updateFilmLogRequest struct {
 	Negative     *bool              `json:"negative"`
 	Brand        *string            `json:"brand"`
 	ISO          *int               `json:"iso"`
-	PurchaseDate *time.Time         `json:"purchase_date"`
-	LoadDate     *time.Time         `json:"load_date"`
+	PurchaseDate *int64             `json:"purchase_date"`
+	LoadDate     *int64             `json:"load_date"`
 	Notes        *string            `json:"notes"`
 }
 
@@ -129,17 +137,25 @@ func (x *Controller) UpdateFilmLog(c *gin.Context) {
 		return
 	}
 
-	if err := x.filmService.UpdateFilmLog(c.Request.Context(), film.UpdateFilmLogRequest{
-		FilmLogID:    uint(filmLogID),
-		UserID:       req.UserID,
-		Format:       req.Format,
-		Negative:     req.Negative,
-		Brand:        req.Brand,
-		ISO:          req.ISO,
-		PurchaseDate: req.PurchaseDate,
-		LoadDate:     req.LoadDate,
-		Notes:        req.Notes,
-	}); err != nil {
+	updateFilmLogRequest := film.UpdateFilmLogRequest{
+		FilmLogID: uint(filmLogID),
+		UserID:    req.UserID,
+		Format:    req.Format,
+		Negative:  req.Negative,
+		Brand:     req.Brand,
+		ISO:       req.ISO,
+		Notes:     req.Notes,
+	}
+
+	if req.PurchaseDate != nil {
+		updateFilmLogRequest.PurchaseDate = util.Pointer(time.Unix(*req.PurchaseDate, 0).UTC())
+	}
+
+	if req.LoadDate != nil {
+		updateFilmLogRequest.LoadDate = util.Pointer(time.Unix(*req.LoadDate, 0).UTC())
+	}
+
+	if err := x.filmService.UpdateFilmLog(c.Request.Context(), updateFilmLogRequest); err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return
 	}

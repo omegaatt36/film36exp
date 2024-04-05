@@ -35,13 +35,13 @@ func (x *photo) fromDomain(domainPhoto *domain.Photo) {
 }
 
 type createPhotoRequest struct {
-	FilmLogID    uint `validate:"required"`
-	Aperture     *float64
-	ShutterSpeed *string
-	Date         *int64
-	Description  *string
-	Tags         []string
-	Location     *string
+	FilmLogID    uint     `json:"film_log_id" validate:"required"`
+	Aperture     *float64 `json:"aperture"`
+	ShutterSpeed *string  `json:"shutter_speed"`
+	Date         *int64   `json:"date"`
+	Description  *string  `json:"description"`
+	Tags         []string `json:"tags"`
+	Location     *string  `json:"location"`
 }
 
 func (x *Controller) CreatePhoto(c *gin.Context) {
@@ -93,13 +93,13 @@ func (x *Controller) GetPhoto(c *gin.Context) {
 }
 
 type updatePhotoRequest struct {
-	FilmLogID    *uint      `json:"film_log_id"`
-	Aperture     *float64   `json:"aperture"`
-	ShutterSpeed *string    `json:"shutter_speed"`
-	Date         *time.Time `json:"date"`
-	Description  *string    `json:"description"`
-	Tags         []string   `json:"tags"`
-	Location     *string    `json:"location"`
+	FilmLogID    *uint    `json:"film_log_id"`
+	Aperture     *float64 `json:"aperture"`
+	ShutterSpeed *string  `json:"shutter_speed"`
+	Date         *int64   `json:"date"`
+	Description  *string  `json:"description"`
+	Tags         []string `json:"tags"`
+	Location     *string  `json:"location"`
 }
 
 // UpdatePhoto update a photo
@@ -116,16 +116,21 @@ func (x *Controller) UpdatePhoto(c *gin.Context) {
 		return
 	}
 
-	if err := x.filmService.UpdatePhoto(c.Request.Context(), film.UpdatePhotoRequest{
+	updatePhotoRequest := film.UpdatePhotoRequest{
 		PhotoID:      uint(photoID),
 		FilmLogID:    req.FilmLogID,
 		Aperture:     req.Aperture,
 		ShutterSpeed: req.ShutterSpeed,
-		Date:         req.Date,
 		Description:  req.Description,
 		Tags:         req.Tags,
 		Location:     req.Location,
-	}); err != nil {
+	}
+
+	if req.Date != nil {
+		updatePhotoRequest.Date = util.Pointer(time.Unix(*req.Date, 0))
+	}
+
+	if err := x.filmService.UpdatePhoto(c.Request.Context(), updatePhotoRequest); err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return
 	}

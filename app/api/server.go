@@ -88,18 +88,18 @@ func (s *Server) registerRoutes() {
 	groupFilmLog := v1.Group("/film_logs")
 	groupFilmLog.POST("/", s.filmController.CreateFilmLog)
 	groupFilmLog.GET("/:id", s.filmController.GetFilmLog)
-	groupFilmLog.PATCH("/:id", s.filmController.UpdateFilmLog)
+	groupFilmLog.PUT("/:id", s.filmController.UpdateFilmLog)
 	groupFilmLog.DELETE("/:id", s.filmController.DeleteFilmLog)
 
 	groupPhoto := v1.Group("/photos")
 	groupPhoto.POST("/", s.filmController.CreatePhoto)
 	groupPhoto.GET("/:id", s.filmController.GetPhoto)
-	groupPhoto.PATCH("/:id", s.filmController.UpdatePhoto)
+	groupPhoto.PUT("/:id", s.filmController.UpdatePhoto)
 	groupPhoto.DELETE("/:id", s.filmController.DeletePhoto)
 
 	groupUser := v1.Group("/users")
 	groupUser.POST("/", s.userController.CreateUser)
 	groupUser.GET("/:id", s.userController.GetUser)
-	groupUser.PATCH("/:id", s.userController.UpdateUser)
+	groupUser.PUT("/:id", s.userController.UpdateUser)
 	groupUser.DELETE("/:id", s.userController.DeleteUser)
 }

@@ -8,8 +8,8 @@ import (
 
 	"github.com/omegaatt36/film36exp/app/api/film"
 	"github.com/omegaatt36/film36exp/app/api/user"
-	"github.com/omegaatt36/film36exp/domain/stub"
 	"github.com/omegaatt36/film36exp/logging"
+	"github.com/omegaatt36/film36exp/rdb"
 	"github.com/omegaatt36/film36exp/rdb/database"
 	filmService "github.com/omegaatt36/film36exp/service/film"
 	userService "github.com/omegaatt36/film36exp/service/user"
@@ -30,17 +30,14 @@ func NewServer() *Server {
 	apiEngine := gin.New()
 	apiEngine.RedirectTrailingSlash = true
 
-	database.GetDB(database.Default)
+	repo := rdb.NewGormRepo(database.GetDB(database.Default))
 
-	userRepo := stub.NewInMemoryUserRepository()
-
-	// FIXME implement real repo
 	filmController := film.NewController(filmService.NewService(
-		userRepo,
-		stub.NewInMemoryFilmRepository(),
+		repo,
+		repo,
 	))
 	userController := user.NewController(userService.NewService(
-		userRepo,
+		repo,
 	))
 
 	return &Server{

@@ -39,7 +39,7 @@ type FilmFormat string
 // FilmRepository defines a film repository
 type FilmRepository interface {
 	CreateFilmLog(ctx context.Context, filmLog *FilmLog) error
-	ListFilmLogs() ([]*FilmLog, error)
+	ListFilmLogs(ctx context.Context) ([]*FilmLog, error)
 	GetFilmLog(ctx context.Context, filmLogID uint) (*FilmLog, error)
 	UpdateFilmLog(ctx context.Context, filmLog *FilmLog) error
 	DeleteFilmLog(ctx context.Context, filmLogID uint) error

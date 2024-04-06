@@ -32,7 +32,7 @@ func (repo *InMemoryFilmRepository) CreateFilmLog(ctx context.Context, filmLog *
 	return nil
 }
 
-func (repo *InMemoryFilmRepository) ListFilmLogs() ([]*domain.FilmLog, error) {
+func (repo *InMemoryFilmRepository) ListFilmLogs(ctx context.Context) ([]*domain.FilmLog, error) {
 	filmLogs := make([]*domain.FilmLog, 0, len(repo.FilmLogs))
 	for _, log := range repo.FilmLogs {
 		filmLogs = append(filmLogs, log)

@@ -19,6 +19,14 @@ check:
 
 setup: setup-postgres
 
+setup-adminer:
+	@if ! $(DOCKER) ps | /bin/grep ${PROJECT_NAME}-adminer-local; then \
+		$(DOCKER) run --name ${PROJECT_NAME}-adminer-local \
+			--link ${PROJECT_NAME}-postgres-local:postgres \
+			-p 8080:8080 \
+			--restart always \
+			-d adminer:latest;\
+	fi
 
 setup-postgres:
 	@if ! $(DOCKER) ps | /bin/grep ${PROJECT_NAME}-postgres-local; then \

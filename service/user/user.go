@@ -30,7 +30,7 @@ type CreateUserRequest struct {
 	Password string `validate:"required,min=8,max=32"`
 }
 
-func (s *Service) encryptPassword(password string) (string, error) {
+func encryptPassword(password string) (string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
@@ -44,7 +44,7 @@ func (s *Service) CreateUser(ctx context.Context, req CreateUserRequest) error {
 		return fmt.Errorf("invalid request: %w", err)
 	}
 
-	hashedPassword, err := s.encryptPassword(req.Password)
+	hashedPassword, err := encryptPassword(req.Password)
 	if err != nil {
 		return err
 	}
@@ -94,7 +94,7 @@ func (s *Service) UpdateUser(ctx context.Context, req UpdateUserRequest) error {
 	}
 
 	if req.Password != nil {
-		hashedPassword, err := s.encryptPassword(*req.Password)
+		hashedPassword, err := encryptPassword(*req.Password)
 		if err != nil {
 			return err
 		}

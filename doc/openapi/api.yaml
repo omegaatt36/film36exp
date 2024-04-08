@@ -502,6 +502,10 @@ components:
     CreateFilmLogRequest:
       type: object
       properties:
+        user_id:
+          type: integer
+          format: uint
+          example: 1
         format:
           type: string
           enum: ["45", "110", "120", "127", "135", "810", "other"]
@@ -527,10 +531,15 @@ components:
           type: string
           example: "notes"
       required:
+        - user_id
         - format
     UpdateFilmLogRequest:
       type: object
       properties:
+        user_id:
+          type: integer
+          format: uint
+          example: 1
         format:
           type: string
           enum: ["45", "110", "120", "127", "135", "810", "other"]

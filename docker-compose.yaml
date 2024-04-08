@@ -50,6 +50,13 @@ services:
     ports:
       - 9527:9527
 
+  adminer:
+    image: adminer
+    container_name: film36exp-adminer
+    restart: always
+    ports:
+      - 8080:8080
+
   postgres:
     image: postgres
     container_name: film36exp-postgres

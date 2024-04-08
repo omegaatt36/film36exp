@@ -40,6 +40,17 @@ setup-postgres:
 			-d postgres:16;\
 	fi
 
+setup-swagger:
+	@if ! $(DOCKER) ps | /bin/grep ${PROJECT_NAME}-swagger-local; then \
+		$(DOCKER) run --name ${PROJECT_NAME}-swagger-local \
+			-e PORT=9527 \
+			-p 9527:9527 \
+			-v ./doc/openapi:/config \
+			-e SWAGGER_JSON=/config/api.yaml \
+			--restart always \
+			-d swaggerapi/swagger-ui:latest;\
+	fi
+
 remove:
 	$(DOCKER) rm -f ${PROJECT_NAME}-postgres-local
 

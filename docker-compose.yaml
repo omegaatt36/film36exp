@@ -1,0 +1,68 @@
+x-env: &default-env
+  DB_DIALECT: postgres
+  DB_HOST: postgres
+  DB_PORT: ${DB_PORT}
+  DB_NAME: ${DB_NAME}
+  DB_USER: ${DB_USER}
+  DB_PASSWORD: ${DB_PASSWORD}
+  DB_SILENCE_LOGGER: ${DB_SILENCE_LOGGER}
+  LOG_LEVEL: ${LOG_LEVEL}
+  APP_ENV: ${APP_ENV}
+  APP_PORT: ${APP_PORT}
+
+services:
+  api:
+    build:
+      dockerfile: Dockerfile
+      args:
+        - CMD=api
+    container_name: film36exp-api
+    environment:
+      <<: *default-env
+    depends_on:
+      api.migration:
+         condition: service_completed_successfully
+    restart: always
+    ports:
+      - 8070:8070
+
+  api.migration:
+    build:
+      dockerfile: Dockerfile
+      args:
+        CMD: api.migration
+    container_name: film36exp-api-migrationy
+    environment:
+      <<: *default-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  swagger:
+    image: swaggerapi/swagger-ui
+    container_name: gotasker-swagger
+    volumes:
+      - ./doc/openapi:/config
+    environment:
+      - SWAGGER_JSON=/config/api.yaml
+      - PORT=9527
+    restart: always
+    ports:
+      - 9527:9527
+
+  postgres:
+    image: postgres
+    container_name: film36exp-postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - ${DB_PORT}:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 1s

@@ -3,10 +3,7 @@ package database
 import (
 	"fmt"
 	"log"
-	"reflect"
 	"time"
-
-	"gorm.io/gorm"
 )
 
 var (
@@ -73,34 +70,4 @@ func TestingInitialize(typ string, opt ConnectOption) {
 // TestingFinalize cleanups testing data.
 func TestingFinalize() {
 	Finalize()
-}
-
-// DeleteCreatedEntities drop all created data
-func DeleteCreatedEntities(db *gorm.DB) func() {
-	hookName := "cleanupHook"
-
-	models := make([]any, 0)
-	// Setup the onCreate Hook
-	db.Callback().Create().After("gorm:create").Register(hookName, func(db *gorm.DB) {
-		switch db.Statement.ReflectValue.Kind() {
-		case reflect.Slice, reflect.Array:
-			db.Statement.CurDestIndex = 0
-			for index := 0; index < db.Statement.ReflectValue.Len(); index++ {
-				elem := reflect.Indirect(db.Statement.ReflectValue.Index(index))
-				models = append(models, elem.Addr().Interface())
-			}
-		case reflect.Struct:
-			models = append(models, db.Statement.ReflectValue.Addr().Interface())
-		}
-	})
-
-	return func() {
-		for _, model := range models {
-			err := db.Session(&gorm.Session{AllowGlobalUpdate: true}).
-				Debug().Unscoped().Delete(model).Error
-			if err != nil {
-				panic(err)
-			}
-		}
-	}
 }

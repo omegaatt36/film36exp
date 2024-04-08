@@ -1,0 +1,708 @@
+openapi: "3.1.0"
+info:
+  title: Film36Exp API Documentation
+  description: |-
+    - The efficient communication between engineers.
+  version: 0.0.1
+  license:
+    name: Unlicense
+    url: https://github.com/omegaatt36/film36exp/blob/main/LICENSE
+servers:
+  - url: "http://localhost:8070"
+tags:
+paths:
+  /v1/users:
+    get:
+      summary: Get all users
+      description: Get all users
+      operationId: getAllUsers
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInternalServerError"
+    post:
+      summary: Create a user
+      description: Create a user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            empty: {}
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrBadRequest"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInternalServerError"
+  /v1/users/{id}:
+    get:
+      summary: Get a user
+      description: Get a user
+      operationId: getUser
+      parameters:
+        - $ref: "#/components/parameters/UserID"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/ErrInvalidID"
+                - $ref: "#/components/schemas/ErrBadRequest"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrUserNotFound"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInternalServerError"
+    put:
+      summary: Update a user
+      description: Update a user
+      operationId: updateUser
+      parameters:
+        - $ref: "#/components/parameters/UserID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            empty: {}
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/ErrInvalidID"
+                - $ref: "#/components/schemas/ErrBadRequest"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrUserNotFound"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInternalServerError"
+    delete:
+      summary: Delete a user
+      description: Delete a user
+      operationId: deleteUser
+      parameters:
+        - $ref: "#/components/parameters/UserID"
+      responses:
+        "204":
+          description: No Content
+          content:
+            empty: {}
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInvalidID"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrUserNotFound"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInternalServerError"
+  /v1/film_logs:
+    get:
+      summary: Get all film logs
+      description: Get all film logs
+      operationId: getAllFilmLogs
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FilmLog"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInternalServerError"
+    post:
+      summary: Create a film log
+      description: Create a film log
+      operationId: createFilmLog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFilmLogRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            empty: {}
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrBadRequest"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInternalServerError"
+  /v1/film_logs/{id}:
+    get:
+      summary: Get a film log
+      description: Get a film log
+      operationId: getFilmLog
+      parameters:
+        - $ref: "#/components/parameters/FilmLogID"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilmLog"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInvalidID"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrFilmLogNotFound"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInternalServerError"
+    put:
+      summary: Update a film log
+      description: Update a film log
+      operationId: updateFilmLog
+      parameters:
+        - $ref: "#/components/parameters/FilmLogID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFilmLogRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            empty: {}
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInvalidID"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrFilmLogNotFound"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInternalServerError"
+    delete:
+      summary: Delete a film log
+      description: Delete a film log
+      operationId: deleteFilmLog
+      parameters:
+        - $ref: "#/components/parameters/FilmLogID"
+      responses:
+        "204":
+          description: No Content
+          content:
+            empty: {}
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInvalidID"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrFilmLogNotFound"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInternalServerError"
+  /v1/photos:
+    get:
+      summary: Get all photos
+      description: Get all photos
+      operationId: getAllPhotos
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Photo"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInternalServerError"
+    post:
+      summary: Create a photo
+      description: Create a photo
+      operationId: createPhoto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePhotoRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            empty: {}
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrBadRequest"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInternalServerError"
+  /v1/photos/{id}:
+    get:
+      summary: Get a photo
+      description: Get a photo
+      operationId: getPhoto
+      parameters:
+        - $ref: "#/components/parameters/PhotoID"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Photo"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInvalidID"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrPhotoNotFound"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInternalServerError"
+    put:
+      summary: Update a photo
+      description: Update a photo
+      operationId: updatePhoto
+      parameters:
+        - $ref: "#/components/parameters/PhotoID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePhotoRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            empty: {}
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInvalidID"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrPhotoNotFound"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInternalServerError"
+    delete:
+      summary: Delete a photo
+      description: Delete a photo
+      operationId: deletePhoto
+      parameters:
+        - $ref: "#/components/parameters/PhotoID"
+      responses:
+        "204":
+          description: No Content
+          content:
+            empty: {}
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInvalidID"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrPhotoNotFound"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrInternalServerError"
+components:
+  parameters:
+    UserID:
+      name: id
+      in: path
+      description: The users's ID. must be a positive integer.
+      required: true
+      schema:
+        type: integer
+        format: uint
+    FilmLogID:
+      name: id
+      in: path
+      description: The film log's ID. must be a positive integer.
+      required: true
+      schema:
+        type: integer
+        format: uint
+    PhotoID:
+      name: id
+      in: path
+      description: The photo's ID. must be a positive integer.
+      required: true
+      schema:
+        type: integer
+        format: uint
+  schemas:
+    # request
+    CreateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "John"
+        account:
+          type: string
+          example: "john"
+        password:
+          type: string
+          example: "P@ssw0rd"
+          minLength: 8
+          maxLength: 32
+      required:
+        - name
+        - account
+        - password
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "John"
+        account:
+          type: string
+          example: "john"
+    CreateFilmLogRequest:
+      type: object
+      properties:
+        format:
+          type: string
+          enum: ["45", "110", "120", "127", "135", "810", "other"]
+          example: "135"
+        negative:
+          type: boolean
+          example: true
+        brand:
+          type: string
+          example: "Kodak"
+        iso:
+          type: integer
+          example: 100
+        purchase_date:
+          type: int64
+          description: Unix timestamp
+          example: 1609459200
+        load_date:
+          type: int64
+          description: Unix timestamp
+          example: 1609459200
+        notes:
+          type: string
+          example: "notes"
+      required:
+        - format
+    UpdateFilmLogRequest:
+      type: object
+      properties:
+        format:
+          type: string
+          enum: ["45", "110", "120", "127", "135", "810", "other"]
+          example: "135"
+        negative:
+          type: boolean
+          example: true
+        brand:
+          type: string
+          example: "Kodak"
+        iso:
+          type: integer
+          example: 100
+        purchase_date:
+          type: int64
+          description: Unix timestamp
+          example: 1609459200
+        load_date:
+          type: int64
+          description: Unix timestamp
+          example: 1609459200
+        notes:
+          type: string
+          example: "notes"
+    CreatePhotoRequest:
+      type: object
+      properties:
+        film_log_id:
+          type: integer
+          example: 1
+        aperture:
+          type: number
+          format: float
+          example: 5.6
+        shutter_speed:
+          type: string
+          example: "1/2000"
+        date:
+          type: integer
+          format: int64
+          example: 1609459200
+        description:
+          type: string
+          nullable: true
+          example: "description"
+        tags:
+          type: array
+          items:
+            type: string
+          example: ["tag1", "tag2"]
+        location:
+          type: string
+          nullable: true
+          example: "location"
+      required:
+        - film_log_id
+    UpdatePhotoRequest:
+      type: object
+      properties:
+        film_log_id:
+          type: integer
+          example: 1
+        aperture:
+          type: number
+          format: float
+          example: 5.6
+        shutter_speed:
+          type: string
+          example: "1/2000"
+        date:
+          type: integer
+          format: int64
+          example: 1609459200
+        description:
+          type: string
+          nullable: true
+          example: "description"
+        tags:
+          type: array
+          items:
+            type: string
+          example: ["tag1", "tag2"]
+        location:
+          type: string
+          nullable: true
+          example: "location"
+    # model
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "John"
+        account:
+          type: string
+          example: "john"
+    FilmLog:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        format:
+          type: string
+          enum: ["45", "110", "120", "127", "135", "810", "other"]
+          example: "135"
+        negative:
+          type: ["null", boolean]
+          example: true
+        brand:
+          type: ["null", string]
+          example: "Kodak"
+        iso:
+          type: ["null", integer]
+          example: 100
+        purchase_date:
+          type: ["null", int64]
+          description: Unix timestamp
+          example: 1609459200
+        load_date:
+          type: ["null", int64]
+          description: Unix timestamp
+          example: 1609459200
+        notes:
+          type: ["null", string]
+          example: "notes"
+    Photo:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        film_log_id:
+          type: integer
+          example: 1
+        aperture:
+          type: ["null", float]
+          example: 5.6
+        shutter_speed:
+          type: ["null", string]
+          example: "1/2000"
+        date:
+          type: ["null", int64]
+          description: Unix timestamp
+          example: 1609459200
+        description:
+          type: ["null", string]
+          example: "description"
+        tags:
+          type: ["null", array]
+          example: ["tag1", "tag2"]
+        location:
+          type: ["null", string]
+          example: "location"
+    ErrInternalServerError:
+      type: string
+      example: "internal server error"
+    ErrInvalidID:
+      type: string
+      example: "invalid param id"
+    ErrUserNotFound:
+      type: string
+      example: "user not found"
+    ErrFilmLogNotFound:
+      type: string
+      example: "film log not found"
+    ErrPhotoNotFound:
+      type: string
+      example: "photo not found"
+    ErrBadRequest:
+      type: string
+      example: "invalid param"

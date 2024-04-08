@@ -50,6 +50,7 @@ func NewServer() *Server {
 
 // Start starts the server
 func (s *Server) Start(ctx context.Context) <-chan struct{} {
+	s.router.Use(corsMiddleware())
 	s.registerRoutes()
 
 	srv := &http.Server{
@@ -89,20 +90,20 @@ func (s *Server) registerRoutes() {
 	v1.Use(injectLogging([]string{}), recovery())
 
 	groupFilmLog := v1.Group("/film_logs")
-	groupFilmLog.POST("/", s.filmController.CreateFilmLog)
-	groupFilmLog.GET("/:id", s.filmController.GetFilmLog)
-	groupFilmLog.PUT("/:id", s.filmController.UpdateFilmLog)
-	groupFilmLog.DELETE("/:id", s.filmController.DeleteFilmLog)
+	groupFilmLog.POST("", s.filmController.CreateFilmLog)
+	groupFilmLog.GET(":id", s.filmController.GetFilmLog)
+	groupFilmLog.PUT(":id", s.filmController.UpdateFilmLog)
+	groupFilmLog.DELETE(":id", s.filmController.DeleteFilmLog)
 
 	groupPhoto := v1.Group("/photos")
-	groupPhoto.POST("/", s.filmController.CreatePhoto)
-	groupPhoto.GET("/:id", s.filmController.GetPhoto)
-	groupPhoto.PUT("/:id", s.filmController.UpdatePhoto)
-	groupPhoto.DELETE("/:id", s.filmController.DeletePhoto)
+	groupPhoto.POST("", s.filmController.CreatePhoto)
+	groupPhoto.GET(":id", s.filmController.GetPhoto)
+	groupPhoto.PUT(":id", s.filmController.UpdatePhoto)
+	groupPhoto.DELETE(":id", s.filmController.DeletePhoto)
 
 	groupUser := v1.Group("/users")
-	groupUser.POST("/", s.userController.CreateUser)
-	groupUser.GET("/:id", s.userController.GetUser)
-	groupUser.PUT("/:id", s.userController.UpdateUser)
-	groupUser.DELETE("/:id", s.userController.DeleteUser)
+	groupUser.POST("", s.userController.CreateUser)
+	groupUser.GET(":id", s.userController.GetUser)
+	groupUser.PUT(":id", s.userController.UpdateUser)
+	groupUser.DELETE(":id", s.userController.DeleteUser)
 }

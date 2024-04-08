@@ -6,6 +6,7 @@ import (
 	"runtime/debug"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/omegaatt36/film36exp/logging"
 	"go.uber.org/zap"
@@ -76,4 +77,22 @@ func recovery() gin.HandlerFunc {
 
 		c.Next()
 	}
+}
+
+func corsMiddleware() gin.HandlerFunc {
+	config := cors.Config{
+		AllowMethods: []string{
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodDelete,
+			http.MethodOptions,
+		},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		AllowCredentials: false,
+		MaxAge:           12 * time.Hour,
+	}
+	config.AllowAllOrigins = true
+
+	return cors.New(config)
 }
